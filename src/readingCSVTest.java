@@ -82,7 +82,7 @@ public class readingCSVTest {
                 .hiddenUnit(RBM.HiddenUnit.RECTIFIED).momentum(5e-1f)
                 .visibleUnit(RBM.VisibleUnit.GAUSSIAN).regularization(false)
                 .l2(2e-2f).dist(Distributions.normal(gen,4.0))
-                .activationFunction(Activations.tanh()).iterations(500)
+                .activationFunction(Activations.tanh()).iterations(1500)
                 .weightInit(WeightInit.DISTRIBUTION)
                 .lossFunction(LossFunctions.LossFunction.MCXENT).rng(gen)
                 .learningRate(1e-7f).nIn(ncols).nOut(nclasses)
@@ -93,7 +93,7 @@ public class readingCSVTest {
         DBN d = new DBN.Builder().configure(conf)
                 .hiddenLayerSizes(new int[]{20,15,10})
                 .build();
-        d.getOutputLayer().conf().setWeightInit(WeightInit.ZERO);
+        d.getOutputLayer().conf().setWeightInit(WeightInit.DISTRIBUTION);
         d.getOutputLayer().conf().setActivationFunction(Activations.softMaxRows());
         d.getOutputLayer().conf().setLossFunction(LossFunctions.LossFunction.MCXENT);
 
@@ -101,7 +101,7 @@ public class readingCSVTest {
         completedData.shuffle();
 
 
-  /*      DataSetIterator dsit = new SamplingDataSetIterator(completedData,50,20000);
+       DataSetIterator dsit = new SamplingDataSetIterator(completedData,5,20000);
 
         //d.pretrain(dsit,1,0.01f,10);
 
@@ -111,12 +111,6 @@ public class readingCSVTest {
             k++;
         }
 
-     /*   while(dsit.hasNext()){
-            DataSet tmp = dsit.next();
-            tmp.normalizeZeroMeanZeroUnitVariance();
-            d.fit(tmp);
-        }
-
         d.setInput(completedData.getFeatureMatrix());
 
         for(int i =0; i < 1; i++)
@@ -124,11 +118,13 @@ public class readingCSVTest {
 
         System.out.println("ran " + k + " unsupervised iterations.");
         System.out.println("ran " + 20 + " supervised iterations.");
-*/
 
-        DataSetIterator iter = new SamplingDataSetIterator(completedData,5,2000);
+        /*DataSetIterator iter = new SamplingDataSetIterator(completedData,50,2000);
         while(iter.hasNext())
             d.fit(iter.next());
+
+        iter.reset();
+        d.finetune(iter,0.01f );*/
 
 
 
@@ -153,14 +149,33 @@ public class readingCSVTest {
     static String prettyPrint(DBN d){
         NeuralNetwork[] layers = d.getNeuralNets();
         StringBuffer sb = new StringBuffer();
-        for(int i = 0; i < layers.length; i++) {
-            INDArray W = layers[0].getW();
-            sb.append("Layer "+i +":\n");
-            for(int j = 0; j < W.rows(); j++)
-                sb.append("\n");
-                for(int k = 0; k < W.columns(); k++)
-                    sb.append(k+"\t");
+
+        INDArray W = d.getInputLayer().getW();
+        sb.append("\n\nInput Layer: " +W.rows()+"x"+W.columns()+":\n");
+        for(int j = 0; j < W.rows(); j++) {
+            sb.append("\n");
+            for (int k = 0; k < W.columns(); k++)
+                sb.append(W.getDouble(j,k)+ "\t");
         }
+
+        for(int i = 0; i < layers.length; i++) {
+            W = layers[i].getW();
+            sb.append("\n\nLayer "+i +":"+W.rows()+"x"+W.columns()+":\n");
+            for(int j = 0; j < W.rows(); j++) {
+                sb.append("\n");
+                for (int k = 0; k < W.columns(); k++)
+                    sb.append(W.getDouble(j,k)+ "\t");
+            }
+        }
+
+        W = d.getOutputLayer().getW();
+        sb.append("\n\nOutput Layer: " +W.rows()+"x"+W.columns()+":\n");
+        for(int j = 0; j < W.rows(); j++) {
+            sb.append("\n");
+            for (int k = 0; k < W.columns(); k++)
+                sb.append(W.getDouble(j,k)+ "\t");
+        }
+
         return sb.toString();
     }
 
