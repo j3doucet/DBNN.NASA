@@ -8,6 +8,7 @@ import datetime
 from format import *
 from os import walk
 from PySide.QtCore import QCoreApplication
+import codecs
 
 #if new_query is set to false, we will instead look at the last file, not query irsa again.
 def get_ipac(ra_dec,new_query=True):
@@ -60,14 +61,14 @@ def mpc_query():
 	f = open(mpc_query,"r")
 
 def get_mpecs(mainWindow,new_file = False):
-	if new_file:
+	if new_file or not os.path.exists("RecentMPECs.html"):
 		#delete the stale data
 		if os.path.exists("RecentMPECs.html"):
 			os.remove("RecentMPECs.html")
 		mpec_filename = wget.download("http://www.minorplanetcenter.net/mpec/RecentMPECs.html")
 	else:
 		mpec_filename = "RecentMPECs.html"
-	f = open(mpec_filename,"r")
+	f = codecs.open(mpec_filename,"r",encoding='UTF-8')
 	prev_line = False
 	start_reading = False
 	lines = f.readlines()
@@ -93,7 +94,7 @@ def get_mpecs(mainWindow,new_file = False):
 					#deal with local links
 					if not re.match("http",columns[1]):
 						columns[1] = "http://www.minorplanetcenter.net"+columns[1]
-					print "downloading: "+columns[1]
+					print("downloading: "+columns[1])
 					result = wget.download(columns[1])
 					time.sleep(1)
 		mainWindow.ReadProgressBar.setValue(25*i/len(lines))
@@ -110,7 +111,7 @@ def parse_mpecs(mainWindow):
 	for i in range(0,len(good_filenames)):
 		mainWindow.ReadProgressBar.setValue(25+25*i/len(good_filenames))
 		line_number = 0
-		f = open(good_filenames[i],"r")
+		f = codecs.open(good_filenames[i],"r", encoding='UTF-8')
 		start_reading = False
 		first_line = False
 		closest_date = datetime.date(1990,1,1)
@@ -151,7 +152,7 @@ def interpolate_data(mpec_data):
 		if entry["closest_date"] == today:
 			ra = entry['ra']
 			dec = entry['dec']
-			print "ephemeris found for today, horay!"
+			print("ephemeris found for today, horay!")
 		else:
 			#we need to linearly extrapolate the distance between the two dates to today's date
 			ra = subtract_times(entry['ra'],entry['last_ra'])
@@ -160,7 +161,7 @@ def interpolate_data(mpec_data):
 				ra[i] = ra[i]*float(today)/float(entry['closest_date']-entry['next_date'])+entry['ra'][i]
 				dec[i] = dec[i]*float(today)/float(entry['closest_date']-entry['next_date'])+entry['dec'][i]
 			ra_dec = formatCoords(ra,dec)
-			print "Interpolated: "+ra_dec
+			print("Interpolated: "+ra_dec)
 
 #returns ra1-ra2
 def subtract_times(ra1,ra2):
@@ -206,7 +207,7 @@ def query_objects(mpec_data,mainWindow,new_query = True):
 	if new_query:
 		mpec_data_new = []
 		for i in range(0,len(mpec_data)):
-			print "Querying "+str(i)+" out of "+str(len(mpec_data))
+			print("Querying "+str(i)+" out of "+str(len(mpec_data)))
 			mainWindow.ReadProgressBar.setValue(50+25*i/len(mpec_data))
 			QCoreApplication.processEvents()
 			entry = mpec_data[i]
@@ -229,7 +230,7 @@ def query_objects(mpec_data,mainWindow,new_query = True):
 	else:
 		#load old data
 		if not os.path.exists(wise_filename):
-			print "File not found!"
+			print("File not found!")
 			return 0
 		f_in = open(wise_filename,"r")
 		lines = f_in.readlines()
