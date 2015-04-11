@@ -1,22 +1,3 @@
-# A clean sample of 7194 LINEAR variables with demonstrated periodic variability and 
-# light curve classification. The construction of starting LINEAR catalog is described 
-# in Sesar et al. 2011 (Astronomical Journal, 142, 190). The final light curve 
-# classification and period verification are described in Palaversa et al. (in prep.)
-# This file contains SDSS photometry. LINEARobjectID is an internal ID that can be 
-# used to find the corresponding light curve data (see file allDAT.tar.gz and for 
-# plots file allPNG.tar.gz). JHK are 2MASS magnitudes and *are* corrected for ISM
-# extinction using rExt, the SDSS r-band extinction from the SFD maps (see file 
-# PLV_SDSS.dat). Jerr, Herr and Kerr are their uncertainties. W1-W4 are the four
-# WISE magnitudes, and W1err-W4err are their uncertainties. WISE photometry is 
-# *not* corrected for ISM. Not all entries have corresponding 2MASS and WISE 
-# detections; when missing, 2MASS and WISE entries are set to -9.90. Out of 7194
-# entries, 6657 have 2MASS detections, and of those 6620 also have at least W1 
-# WISE detection. 
-# File PLV_LINEAR.dat lists light curve based data and file PLV_SDSS.dat lists SDSS 
-# data (when available). Entries in those files are listed in the same order as in 
-# this file. 
-#                               (Apr 2013, Zeljko Ivezic, ivezic@astro.washington.edu)
-# LINEARobjectID  J     H     K    Jerr  Herr  Kerr  W1    W2    W3    W4   W1err W2err W3err W4err
            2522 15.45 14.94 14.76  0.06  0.09  0.10 14.52 14.63 12.60  8.84  0.03  0.07 -9.90 -9.90 
            4822 13.55 13.28 13.15  0.03  0.03  0.03 12.92 12.90 12.45  8.56  0.03  0.03 -9.90 -9.90 
           17249 14.80 14.31 14.12  0.03  0.04  0.05 13.95 13.91 12.38  9.15  0.03  0.04 -9.90 -9.90 
