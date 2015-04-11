@@ -36,6 +36,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 		mpec_data = generate_classifier(mpec_data,self)
 		self.AsteroidBrowser.setHtml(format_mpec_table(mpec_data))
 		self.StatusLabel.setText("Done!")
+		self.ReadProgressBar.setValue(100)
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
 	frame = MainWindow()

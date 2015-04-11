@@ -223,7 +223,6 @@ def query_objects(mpec_data,mainWindow,new_query = True):
 					mpec_data[i][key2] = 0
 				else:
 					mpec_data[i][key2] = closest_entry[key2]
-				print key2+" "+str(mpec_data[i][key2])
 			mainWindow.AsteroidBrowser.setHtml(format_mpec_table(mpec_data))
 			QCoreApplication.processEvents()
 		#write this data to a file for future use
@@ -236,7 +235,6 @@ def query_objects(mpec_data,mainWindow,new_query = True):
 				if isinstance(entry[key],list):
 					tmpstr=str(entry[key][0])+" "+str(entry[key][1])+" "+str(entry[key][2])
 					#str_out+=tmpstr+","
-					print tmpstr
 				if isinstance(entry[key],datetime.date):
 					tmpstr=entry[key].strftime("%Y-%m-%d")
 					str_out+=tmpstr+","
@@ -288,19 +286,25 @@ def generate_classifier(mpec_data,mainWindow):
 		mainWindow.ReadProgressBar.setValue(75+25*i/len(mpec_data))
 		tmp_out = open("classifier.csv","w+")
 		str_out = ""
-		for i in range(1,5):
-			key = "w"+str(i)+"mpro"
-			str_out += str(mpec_data[i][key])+","
-		for i in range(1,5):
-			key = "w"+str(i)+"sigmpro"
-			str_out +=str(mpec_data[i][key])
-			if i!=4:
+		for j in range(1,5):
+			key = "w"+str(j)+"mpro"
+			str_out += str(mpec_data[j][key])+","
+		for j in range(1,5):
+			key = "w"+str(j)+"sigmpro"
+			str_out +=str(mpec_data[j][key])
+			if j!=4:
 				str_out+=","
 		tmp_out.write(str_out)
 		tmp_out.close()
-		mpec_data[i]['class'] = os.popen("java -jar ../classes/artifacts/DBNN_jar/DBNN.jar classifier.csv").read()
+		command = "java -jar ../classes/artifacts/DBNN_jar/DBNN.jar ../Data/Model.NN classifier.csv"
+		print command
+		mpec_data[i]['class'] = os.popen(command).read()
+		if mpec_data[i]['class'] =="":
+			mpec_data[i]['class'] = "0"
+		print "got class: "+mpec_data[i]['class']+" name: "+mpec_data[i]['name']
 		mainWindow.AsteroidBrowser.setHtml(format_mpec_table(mpec_data))
 		QCoreApplication.processEvents()
+	return mpec_data
 
 if __name__ == '__main__':
 	mpec_data = parse_mpecs()
