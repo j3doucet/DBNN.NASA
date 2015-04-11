@@ -2,11 +2,12 @@
 import wget
 import re
 import time
+import math
 import datetime
 from os import walk
 
 def get_ipac(ra_dec):
-	url_query = "http://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=wise_allwise_p3as_psd&spatial=cone&size=100&outfmt=1&selcols=w1mpro,w2mpro,w3mpro,w4mpro&&objstr=00h+42m+44.32s+41d+16m+08.5s"
+	url_query = "http://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=wise_allwise_p3as_psd&spatial=cone&size=100&outfmt=1&selcols=w1mpro,w2mpro,w3mpro,w4mpro&&objstr="+ra_dec
 	result = wget.download(url_query)
 	result = "nph-query"
 	f = open(result,"r")
@@ -77,5 +78,78 @@ def parse_mpecs():
 				if closest_date != datetime.date(1990,1,1):
 					row = {"name":asteroid_name,"closest_date":closest_date,"next_date":next_closest_date,"ra":ra,"dec":dec,"last_ra":last_ra,"last_dec":last_dec}
 					mpec_data.append(row)
+	return mpec_data
+#some of the ephemeris don't line up with the current date, if so, interpolate between the last couple of days 
+def interpolate_data(mpec_data):
+	today = datetime.date.today()
+	interpolated_mpec = []
+	for entry in mpec_data:
+		if entry["closest_date"] == today:
+			ra = entry['ra']
+			dec = entry['dec']
+			print "ephemeris found for today, horay!"
+		else:
+			#we need to linearly extrapolate the distance between the two dates to today's date
+			ra = subtract_times(entry['ra'],entry['last_ra'])
+			dec = subtract_times(entry['dec'],entry['last_dec'])
+			for i in range(0,3):
+				ra[i] = ra[i]*float(today)/float(entry['closest_date']-entry['next_date'])+entry['ra'][i]
+				dec[i] = dec[i]*float(today)/float(entry['closest_date']-entry['next_date'])+entry['dec'][i]
+			print "Interpolated: "+str(ra[0])+"h+"+str(ra[1])+"m+"+str(ra[2])+"s+"+str(dec[0])+"d"+str(dec[1])+"m"+str(dec[2])+"s"
+#returns ra1-ra2
+def subtract_times(ra1,ra2):
+	ra = [0,0,0]
+	#if we're dealing with declinations, we need to make sure that the two are in the same direction
+	if math.copysign(1,ra1[0]) != math.copysign(1,ra2[0]):
+		if math.copysign(1,ra1[0])==1:
+			ra[0] = ra1[0]+abs(ra2[0])
+		else:
+			ra[0] = -(ra1[0]+abs(ra2[0]))
+		ra[1] = ra1[1]+ra2[1]
+		ra[2] = ra1[2]+ra2[2]
+	else:
+		ra[0] = ra1[0]-ra2[0]
+		ra[1] = ra1[1]-ra2[1]
+		ra[2] = ra1[2]-ra2[2]
+		#now to correct the values
+		#seconds
+		if ra[2]<0.0:
+			ra[2] += 60.0
+			ra[1] -= 1
+		if ra[2]>=60.0:
+			ra[2] = ra[2]-60.0
+			ra[1]+=1
+		#minutes
+		if ra[1]<0.0:
+			ra[1] += 60.0
+			if math.copysign(1,ra1[0])==-1:
+				ra[0] += 1
+			else:
+				ra[0] -= 1
+		if ra[1]>=60.0:
+			ra[1] = ra[1]-60.0
+			if math.copysign(1,ra1[0])==-1:
+				ra[0]-=1
+			else:
+				ra[0]+=1
+	return ra
 
-parse_mpecs()
+def query_objects(mpec_data):
+	tmp_out = open("tmp_out",'w')
+	for entry in mpec_data:
+		if entry['dec'][0]<0:
+			dec_sign = "-"
+		else:
+			dec_sign = "+" 
+		ra_dec = str(entry['ra'][0])+"h+"+str(entry['ra'][1])+"m+"+str(entry['ra'][2])+"s"+dec_sign+str(abs(entry['dec'][0]))+"d+"+str(entry['dec'][1])+"m+"+str(entry['dec'][2])+"s"
+		tmp_out.write(ra_dec)
+		print ra_dec
+		#only do the first one until we're sure we got it right
+		get_ipac(ra_dec)
+		return
+		
+if __name__ == '__main__':
+	mpec_data = parse_mpecs()
+	#let's ignore interpolation for now...
+	#interpolate_data(mpec_data)
+	query_objects(mpec_data)
