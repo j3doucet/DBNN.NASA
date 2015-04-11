@@ -101,7 +101,7 @@ public class readingCSVTest {
         completedData.shuffle();
 
 
-       DataSetIterator dsit = new SamplingDataSetIterator(completedData,5,200);
+       DataSetIterator dsit = new SamplingDataSetIterator(completedData,5,20000);
 
         //d.pretrain(dsit,1,0.01f,10);
 
