@@ -202,23 +202,47 @@ def subtract_times(ra1,ra2):
 
 #for each entry in the mpec data, search for the object in WISE and extract the W's of the closest source
 def query_objects(mpec_data,mainWindow,new_query = True):
-	tmp_out = open("tmp_out",'w')
-	mpec_data_new = []
-	for i in range(0,len(mpec_data)):
-		print "Querying "+str(i)+" out of "+str(len(mpec_data))
-		mainWindow.ReadProgressBar.setValue(50+25*i/len(mpec_data))
-		QCoreApplication.processEvents()
-		entry = mpec_data[i]
-		ra_dec = formatCoords(entry['ra'],entry['dec'])
-		tmp_out.write(ra_dec)
-		#only do the first one until we're sure we got it right
-		[num_sources, closest_entry] = get_ipac(ra_dec,new_query)
-		mpec_data[i]["num_sources"] = num_sources
-		for j in range(1,5):
-			key = "w"+str(j)+"mpro"
-			mpec_data[i][key] = closest_entry[key]
-		mainWindow.AsteroidBrowser.setHtml(format_mpec_table(mpec_data))
-		QCoreApplication.processEvents()
+	wise_filename = "WISE_results.csv"
+	if new_query:
+		mpec_data_new = []
+		for i in range(0,len(mpec_data)):
+			print "Querying "+str(i)+" out of "+str(len(mpec_data))
+			mainWindow.ReadProgressBar.setValue(50+25*i/len(mpec_data))
+			QCoreApplication.processEvents()
+			entry = mpec_data[i]
+			ra_dec = formatCoords(entry['ra'],entry['dec'])
+			#only do the first one until we're sure we got it right
+			[num_sources, closest_entry] = get_ipac(ra_dec,new_query)
+			mpec_data[i]["num_sources"] = num_sources
+			for j in range(1,5):
+				key = "w"+str(j)+"mpro"
+				mpec_data[i][key] = closest_entry[key]
+			mainWindow.AsteroidBrowser.setHtml(format_mpec_table(mpec_data))
+			QCoreApplication.processEvents()
+		#write this data to a file for future use
+		f_out = open(wise_filename,"w+")
+		keys = mpec_data[0].keys()
+		f_out.write(",".join(keys)+"\n")
+		for entry in mpec_data:
+			f_out.write(",".join(entry)+"\n")
+		f_out.close()
+	else:
+		#load old data
+		if not os.path.exists(wise_filename):
+			print "File not found!"
+			return 0
+		f_in = open(wise_filename,"r")
+		lines = f_in.readlines()
+		mpec_data = []
+		for i in range(0,len(lines)):
+			if i ==0:
+				keys = lines.split(",")
+			else:
+				row = []
+				cells = lines.split(",")
+				for j in range(0,len(cells)):
+					row[keys[j]]=cells[j]
+				mpec_data.append(row)
 	return mpec_data
 
 if __name__ == '__main__':

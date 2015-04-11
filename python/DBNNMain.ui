@@ -104,6 +104,7 @@
      <string>Asteroids</string>
     </property>
     <addaction name="actionGetAsteroids"/>
+    <addaction name="actionLoad_Old_Data"/>
    </widget>
    <widget class="QMenu" name="menuBrains">
     <property name="title">
@@ -122,6 +123,11 @@
   <action name="actionBloop2">
    <property name="text">
     <string>bloop2</string>
+   </property>
+  </action>
+  <action name="actionLoad_Old_Data">
+   <property name="text">
+    <string>Load Old Data</string>
    </property>
   </action>
  </widget>

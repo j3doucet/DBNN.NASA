@@ -5,3 +5,4 @@ nph-query*
 tmp_out
 *.pyc
 data_backup
+DBNNMain.ui.autosave
