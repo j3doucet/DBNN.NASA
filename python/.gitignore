@@ -6,3 +6,4 @@ tmp_out
 *.pyc
 data_backup
 DBNNMain.ui.autosave
+WISE_results-2.txt

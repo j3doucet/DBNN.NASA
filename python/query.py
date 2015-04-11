@@ -229,7 +229,8 @@ def query_objects(mpec_data,mainWindow,new_query = True):
 			for key in keys:
 				if isinstance(entry[key],list):
 					tmpstr=str(entry[key][0])+" "+str(entry[key][1])+" "+str(entry[key][2])
-					str_out+=tmpstr+","
+					#str_out+=tmpstr+","
+					print tmpstr
 				if isinstance(entry[key],datetime.date):
 					tmpstr=entry[key].strftime("%Y-%m-%d")
 					str_out+=tmpstr+","
@@ -238,6 +239,7 @@ def query_objects(mpec_data,mainWindow,new_query = True):
 			f_out.write(str_out+"\n")
 		f_out.close()
 	else:
+		print "loading old data"
 		#load old data
 		if not os.path.exists(wise_filename):
 			print("File not found!")
@@ -247,23 +249,31 @@ def query_objects(mpec_data,mainWindow,new_query = True):
 		mpec_data = []
 		for i in range(0,len(lines)):
 			if i ==0:
-				keys = lines.split(",")
+				keys = lines[i].split(",")
 			else:
-				row = []
-				cells = lines.split(",")
+				row = {}
+				cells = lines[i].split(",")
+				data_int = 0
 				for j in range(0,len(keys)):
+					print keys[j]
 					if keys[j].find("date")>0:
-						parts = cells[j].split("-")
+						print cells[data_int]
+						parts = cells[data_int].split("-")
+						print parts
 						tmp_date = datetime.date(parts[0],parts[1],parts[2])
 						row[keys[j]] = tmp_date
+						data_int+=1
 					elif keys[j].find("ra")>0 or keys[j].find("dev")>0:
-						cells[j] = cells[j].replace("[","")
-						cells[j] = cells[j].replace("]","")
-						cells[j] = cells[j].replace("'","")
-						parts = cells[j].split(",")
+						for k in range(0,3):
+							cells[data_int] = cells[data_int].replace("[","")
+							cells[data_int] = cells[data_int].replace("]","")
+							cells[data_int] = cells[data_int].replace("'","")
+							print cells[data_int]
+							parts[k] = cells[data_int]
+							data_int+=1
 						row[keys[j]] = float(parts)
 					else:
-						row[keys[j]]=cells[j]
+						row[keys[j]]=cells[data_int]
 				mpec_data.append(row)
 	return mpec_data
 
