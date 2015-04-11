@@ -48,7 +48,7 @@ public class readingCSVTest {
         List<String> lines = org.apache.commons.io.IOUtils.readLines(fis);
 
         int nrows=6146;
-        int ncols=26;
+        int ncols=8;
         int nclasses=5;
         INDArray data = Nd4j.ones(nrows,ncols);
         List<String> outcomeTypes = new ArrayList<String>();
@@ -91,7 +91,7 @@ public class readingCSVTest {
 
 
         DBN d = new DBN.Builder().configure(conf)
-                .hiddenLayerSizes(new int[]{20,15,10})
+                .hiddenLayerSizes(new int[]{6})
                 .build();
         d.getOutputLayer().conf().setWeightInit(WeightInit.DISTRIBUTION);
         d.getOutputLayer().conf().setActivationFunction(Activations.softMaxRows());
@@ -101,7 +101,7 @@ public class readingCSVTest {
         completedData.shuffle();
 
 
-       DataSetIterator dsit = new SamplingDataSetIterator(completedData,5,20000);
+       DataSetIterator dsit = new SamplingDataSetIterator(completedData,5,200);
 
         //d.pretrain(dsit,1,0.01f,10);
 

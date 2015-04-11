@@ -83,8 +83,10 @@ public class NNImporter {
         return new DataSet(data, Nd4j.create(outcomes));
     }
 
-    public NeuralNetwork
+    public NeuralNetwork genNetwork(String NetworkFile){
 
+        return null;
+        /*
         NeuralNetConfiguration conf = new NeuralNetConfiguration.Builder()
                 .hiddenUnit(RBM.HiddenUnit.RECTIFIED).momentum(5e-1f)
                 .visibleUnit(RBM.VisibleUnit.GAUSSIAN).regularization(false)
@@ -133,7 +135,7 @@ public class NNImporter {
         d.finetune(iter,0.01f );*/
 
 
-        int[] predict = d.predict(completedData.getFeatureMatrix());
+        /*int[] predict = d.predict(completedData.getFeatureMatrix());
         String[] labels = new String[predict.length];
         double acc = 0;
         for (int i = 0; i < predict.length; i++) {
@@ -148,7 +150,7 @@ public class NNImporter {
 
         System.out.println("Model:" + prettyPrint(d));
 
-
+*/
     }
 
     static String prettyPrint(DBN d) {
