@@ -7,44 +7,20 @@
     <x>0</x>
     <y>0</y>
     <width>1038</width>
-    <height>711</height>
+    <height>900</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>DBNN.NASA</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="0" colspan="2">
-     <widget class="QWidget" name="widget_3" native="true">
-      <widget class="QProgressBar" name="ReadProgressBar">
-       <property name="geometry">
-        <rect>
-         <x>7</x>
-         <y>20</y>
-         <width>831</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="value">
-        <number>0</number>
-       </property>
-      </widget>
-      <widget class="QLabel" name="StatusLabel">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>80</y>
-         <width>561</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </widget>
-    </item>
     <item row="0" column="0">
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
@@ -66,13 +42,48 @@
        </widget>
       </item>
       <item>
-       <widget class="QTextBrowser" name="AsteroidBrowser">
+       <widget class="QWebView" name="AsteroidBrowser">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="url">
+         <url>
+          <string>about:blank</string>
+         </url>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="widget_3" native="true">
+        <widget class="QProgressBar" name="ReadProgressBar">
+         <property name="geometry">
+          <rect>
+           <x>7</x>
+           <y>20</y>
+           <width>831</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="value">
+          <number>0</number>
+         </property>
+        </widget>
+        <widget class="QLabel" name="StatusLabel">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>50</y>
+           <width>561</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
        </widget>
       </item>
      </layout>
@@ -88,7 +99,7 @@
      <height>26</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuHello_Sample">
+   <widget class="QMenu" name="Asteroids">
     <property name="title">
      <string>Asteroids</string>
     </property>
@@ -99,7 +110,7 @@
      <string>Brains</string>
     </property>
    </widget>
-   <addaction name="menuHello_Sample"/>
+   <addaction name="Asteroids"/>
    <addaction name="menuBrains"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -114,6 +125,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QWebView</class>
+   <extends>QWidget</extends>
+   <header>QtWebKitWidgets/QWebView</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -95,7 +95,21 @@ def interpolate_data(mpec_data):
 			for i in range(0,3):
 				ra[i] = ra[i]*float(today)/float(entry['closest_date']-entry['next_date'])+entry['ra'][i]
 				dec[i] = dec[i]*float(today)/float(entry['closest_date']-entry['next_date'])+entry['dec'][i]
-			print "Interpolated: "+str(ra[0])+"h+"+str(ra[1])+"m+"+str(ra[2])+"s+"+str(dec[0])+"d"+str(dec[1])+"m"+str(dec[2])+"s"
+			ra_dec = formatCoords(ra,dec)
+			print "Interpolated: "+ra_dec
+#format the Right Ascention/ Declination coordinates into WISE format
+def formatCoords(ra,dec):
+	if dec[0]<0:
+		dec_sign = "-"
+	else:
+		dec_sign = "+" 
+	for i in range(0,2):
+		ra[i] = "%02.f" % ra[i]
+		dec[i] = "%02.f" % abs(dec[i])
+	ra[2] = "%04.1f" %ra[2]
+	dec[2] = "%02.f" %dec[2]
+	ra_dec = ra[0]+"h+"+ra[1]+"m+"+ra[2]+"s"+dec_sign+dec[0]+"d+"+dec[1]+"m+"+dec[2]+"s"
+	return ra_dec
 #returns ra1-ra2
 def subtract_times(ra1,ra2):
 	ra = [0,0,0]
@@ -137,16 +151,12 @@ def subtract_times(ra1,ra2):
 def query_objects(mpec_data):
 	tmp_out = open("tmp_out",'w')
 	for entry in mpec_data:
-		if entry['dec'][0]<0:
-			dec_sign = "-"
-		else:
-			dec_sign = "+" 
-		ra_dec = str(entry['ra'][0])+"h+"+str(entry['ra'][1])+"m+"+str(entry['ra'][2])+"s"+dec_sign+str(abs(entry['dec'][0]))+"d+"+str(entry['dec'][1])+"m+"+str(entry['dec'][2])+"s"
+		ra_dec = formatCoords(entry['ra'],entry['dec'])
 		tmp_out.write(ra_dec)
 		print ra_dec
 		#only do the first one until we're sure we got it right
-		get_ipac(ra_dec)
-		return
+		#get_ipac(ra_dec)
+		#return
 		
 if __name__ == '__main__':
 	mpec_data = parse_mpecs()
