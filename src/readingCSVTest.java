@@ -18,7 +18,10 @@ import org.nd4j.linalg.util.Shape;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import java.io.Serializable;
 
-import org.deeplearning4j.*;
+
+import org.deeplearning4j.models.featuredetectors.rbm.RBM;
+import org.deeplearning4j.distributions.Distributions;
+
 
 
 import java.util.Arrays;
@@ -39,9 +42,9 @@ public class readingCSVTest {
 
         List<String> lines = org.apache.commons.io.IOUtils.readLines(fis);
 
-        int nrows=2;
+        int nrows=150;
         int ncols=4;
-        int nclasses=2;
+        int nclasses=3;
         INDArray data = Nd4j.ones(nrows,ncols);
         List<String> outcomeTypes = new ArrayList<String>();
         double[][] outcomes = new double[lines.size()][3];
@@ -73,8 +76,8 @@ public class readingCSVTest {
         NeuralNetConfiguration conf = new NeuralNetConfiguration.Builder()
                 .hiddenUnit(RBM.HiddenUnit.RECTIFIED).momentum(5e-1f)
                 .visibleUnit(RBM.VisibleUnit.GAUSSIAN).regularization(true)
-                .regularizationCoefficient(2e-4f).dist(Distributions.uniform(gen))
-                .activationFunction(Activations.tanh()).iterations(10000)
+                .l2(2e-4f).dist(Distributions.uniform(gen))
+                .activationFunction(Activations.tanh()).iterations(10)
                 .weightInit(WeightInit.DISTRIBUTION)
                 .lossFunction(LossFunctions.LossFunction.RECONSTRUCTION_CROSSENTROPY).rng(gen)
                 .learningRate(1e-3f).nIn(ncols).nOut(nclasses).build();
@@ -99,7 +102,12 @@ public class readingCSVTest {
         eval.eval(completedData.getLabels(),predict2);
         //log.info(eval.stats());
         int[] predict = d.predict(completedData.getFeatureMatrix());
-        System.out.println("Predict " + Arrays.toString(predict));
+        String[] labels = new String[predict.length];
+        for(int i = 0; i < predict.length; i++){
+            labels[i] = outcomeTypes.get(predict[i]);
+        }
+
+        System.out.println("Predict " + Arrays.toString(labels));
 
     }
 
