@@ -13,7 +13,25 @@ def format_row(row_list,bg_color,fontface,fontsize,bold):
 		output_str+="</font></td>"
 	output_str+="</tr>"
 	return output_str
-	
+
+#format the Right Ascention/ Declination coordinates into WISE format
+def formatCoords(ra,dec):
+	#if they are strings, switch them back to floats
+	for i in range(0,3):
+		ra[i] = float(ra[i])
+		dec[i] = float(dec[i])
+	if dec[0]<0:
+		dec_sign = "-"
+	else:
+		dec_sign = "+" 
+	for i in range(0,2):
+		ra[i] = "%02.f" % ra[i]
+		dec[i] = "%02.f" % abs(dec[i])
+	ra[2] = "%04.1f" %ra[2]
+	dec[2] = "%02.f" %dec[2]
+	ra_dec = ra[0]+"h+"+ra[1]+"m+"+ra[2]+"s"+dec_sign+dec[0]+"d+"+dec[1]+"m+"+dec[2]+"s"
+	return ra_dec
+
 def format_mpec_table(mpec_data):
 	alternate_rows = False
 	bg_color1 = "#DAC8B6"
@@ -21,7 +39,7 @@ def format_mpec_table(mpec_data):
 	font_face = "verdana"
 	font_size = "2pt"
 	asteroid_text= "<table>"
-	asteroid_columns = ["Asteroid Name","Ephemeris Date","Coordinates","Found WISE Source","Light Curves"]
+	asteroid_columns = ["Asteroid Name","Ephemeris Date","Coordinates","WISE Source","Light Curves","Class"]
 	asteroid_text +=format_row(asteroid_columns,bg_color1,font_face,font_size,True)
 	for mpec in mpec_data:
 		#print mpec['ra']
@@ -34,23 +52,23 @@ def format_mpec_table(mpec_data):
 			alternate_rows = True
 		if "num_sources" in mpec.keys():
 			if mpec["num_sources"]==0:
-				search_status = "No sources found!"
-			if mpec["num_sources"]==1:
-				search_status = "1 source found" 
-			if mpec["num_sources"]>1:
-				search_status = str(mpec["num_sources"])+" sources found"
+				search_status = "Not found!"
+			if mpec["num_sources"]>0:
+				search_status = str(mpec["num_sources"])+" found"
 		else:
 			search_status = "Not yet searched"
-		if "w1mpro" in mpec.keys():
-			light_curve = ""
-			for i in range(1,5):
-				key = "w"+str(i)+"mpro"
+		light_curve = ""
+		for k in range(1,5):
+			key = "w"+str(k)+"mpro"
+			if key in mpec.keys():
 				light_curve+=mpec[key]
-				if i!=4:
+				if k!=4:
 					light_curve+=","
+		if "class" in mpec.keys():
+			classification = mpec["class"]
 		else:
-			light_curve=""
-		asteroid_cells = [mpec["name"],mpec["closest_date"].strftime("%Y-%m-%d"),ra_dec,search_status,light_curve]
+			classification = ""
+		asteroid_cells = [mpec["name"],mpec["closest_date"].strftime("%Y-%m-%d"),ra_dec,search_status,light_curve,classification]
 		asteroid_text+=format_row(asteroid_cells,bgcolor,font_face,font_size,False)
 	asteroid_text +="</table>"
 	return asteroid_text
