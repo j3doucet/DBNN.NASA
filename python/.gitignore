@@ -1,0 +1,6 @@
+# ignore html files,
+*.html
+#ignore the solution from ipac
+nph-query*
+tmp_out
+*.pyc

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1038</width>
+    <height>711</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>DBNN.NASA</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="0" colspan="2">
+     <widget class="QWidget" name="widget_3" native="true">
+      <widget class="QProgressBar" name="ReadProgressBar">
+       <property name="geometry">
+        <rect>
+         <x>7</x>
+         <y>20</y>
+         <width>831</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="value">
+        <number>0</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="StatusLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>80</y>
+         <width>561</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>19</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Latest Asteroids</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTextBrowser" name="AsteroidBrowser">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1038</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuHello_Sample">
+    <property name="title">
+     <string>Asteroids</string>
+    </property>
+    <addaction name="actionGetAsteroids"/>
+   </widget>
+   <widget class="QMenu" name="menuBrains">
+    <property name="title">
+     <string>Brains</string>
+    </property>
+   </widget>
+   <addaction name="menuHello_Sample"/>
+   <addaction name="menuBrains"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionGetAsteroids">
+   <property name="text">
+    <string>Get Latest</string>
+   </property>
+  </action>
+  <action name="actionBloop2">
+   <property name="text">
+    <string>bloop2</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
