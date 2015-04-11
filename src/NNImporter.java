@@ -9,6 +9,7 @@ import org.deeplearning4j.nn.WeightInit;
 import org.deeplearning4j.nn.api.NeuralNetwork;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.nd4j.linalg.api.activation.Activations;
+import org.nd4j.linalg.api.ndarray.BaseNDArray;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.factory.Nd4j;
@@ -22,6 +23,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.Scanner;
 
 public class NNImporter {
 
@@ -29,10 +32,12 @@ public class NNImporter {
 
 
     public static void main(String[] args) throws Exception {
-        RandomGenerator gen = new MersenneTwister(123);
+
 
         String NNFile = args[0];
         String DataFile = args[1];
+
+        label(genNetwork(NNFile), parseData(DataFile));
 
     }
 
@@ -52,8 +57,8 @@ public class NNImporter {
             System.err.println("Error: Unable to parse passed CSV file: " + NNFile);
             System.exit(1);
         }
-        int nrows = 6146;
-        int ncols = 26;
+        int nrows = 1;
+        int ncols = 8;
         int nclasses = 5;
         INDArray data = Nd4j.ones(nrows, ncols);
         List<String> outcomeTypes = new ArrayList<String>();
@@ -83,10 +88,21 @@ public class NNImporter {
         return new DataSet(data, Nd4j.create(outcomes));
     }
 
-    public NeuralNetwork genNetwork(String NetworkFile){
+    public static DBN genNetwork(String NetworkFile) {
+        Scanner fis = null;
 
-        return null;
-        /*
+        try {
+            File f = new File(NetworkFile);
+            fis = new Scanner(new FileInputStream(f));
+        } catch (java.io.FileNotFoundException e) {
+            System.err.println("Error: NN Storage file: " + NetworkFile + " either does not exist, or " +
+                    "incorrect path was provided. Exiting.\n");
+            System.exit(1);
+        }
+
+
+        RandomGenerator gen = new MersenneTwister(123);
+
         NeuralNetConfiguration conf = new NeuralNetConfiguration.Builder()
                 .hiddenUnit(RBM.HiddenUnit.RECTIFIED).momentum(5e-1f)
                 .visibleUnit(RBM.VisibleUnit.GAUSSIAN).regularization(false)
@@ -94,63 +110,55 @@ public class NNImporter {
                 .activationFunction(Activations.tanh()).iterations(1500)
                 .weightInit(WeightInit.DISTRIBUTION)
                 .lossFunction(LossFunctions.LossFunction.MCXENT).rng(gen)
-                .learningRate(1e-7f).nIn(ncols).nOut(nclasses)
+                .learningRate(1e-7f).nIn(8).nOut(5)
                 .build();
 
 
         DBN d = new DBN.Builder().configure(conf)
-                .hiddenLayerSizes(new int[]{20, 15, 10})
+                .hiddenLayerSizes(new int[]{6})
                 .build();
         d.getOutputLayer().conf().setWeightInit(WeightInit.DISTRIBUTION);
         d.getOutputLayer().conf().setActivationFunction(Activations.softMaxRows());
         d.getOutputLayer().conf().setLossFunction(LossFunctions.LossFunction.MCXENT);
 
-        completedData.normalizeZeroMeanZeroUnitVariance();
-        completedData.shuffle();
+
+        d.getInputLayer().setW(readMatrix(fis));
+        d.getLayers()[0].setW(readMatrix(fis));
+        d.getOutputLayer().setW(readMatrix(fis));
 
 
-        DataSetIterator dsit = new SamplingDataSetIterator(completedData, 5, 20000);
+        return d;
+    }
 
-        //d.pretrain(dsit,1,0.01f,10);
+    public static INDArray readMatrix(Scanner fis) {
+        INDArray rval = null;
 
-        int k = 0;
-        while (dsit.hasNext()) {
-            d.pretrain(dsit.next().getFeatureMatrix(), null);
-            k++;
-        }
+        int x = fis.nextInt();
+        int y = fis.nextInt();
 
-        d.setInput(completedData.getFeatureMatrix());
+        double[][] dat = new double[x][y];
 
-        for (int i = 0; i < 1; i++)
-            d.finetune(completedData.getLabels());
+        for (int i = 0; i < x; i++)
+            for (int j = 0; j < y; j++) {
+                dat[i][j] = fis.nextDouble();
+                System.err.println("read: "+dat[i][j]);
+            }
 
-        System.out.println("ran " + k + " unsupervised iterations.");
-        System.out.println("ran " + 20 + " supervised iterations.");
+        Nd4j Fac = new Nd4j();
+        rval = Fac.create(dat);
 
-        /*DataSetIterator iter = new SamplingDataSetIterator(completedData,50,2000);
-        while(iter.hasNext())
-            d.fit(iter.next());
+        return rval;
+    }
 
-        iter.reset();
-        d.finetune(iter,0.01f );*/
+    public static void label(DBN d, DataSet testData) {
 
-
-        /*int[] predict = d.predict(completedData.getFeatureMatrix());
+        int[] predict = d.predict(testData.getFeatureMatrix());
         String[] labels = new String[predict.length];
+
+        String[] outcomeTypes = {"1", "2", "4", "5", "6"};
         double acc = 0;
-        for (int i = 0; i < predict.length; i++) {
-            labels[i] = outcomeTypes.get(predict[i]);
-            if (outcomes[i][predict[i]] == 1)
-                acc++;
-        }
-        acc /= predict.length;
-
-        System.out.println("Accuracy: " + acc);
-        System.out.println("Predict " + Arrays.toString(labels));
-
-        System.out.println("Model:" + prettyPrint(d));
-
-*/
+        for (int i = 0; i < predict.length; i++)
+            System.out.println(outcomeTypes[predict[i]] + "\n");
     }
 
     static String prettyPrint(DBN d) {
