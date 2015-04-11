@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'DBNNMain.ui'
 #
-# Created: Sat Apr 11 17:37:38 2015
+# Created: Sat Apr 11 19:21:46 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,12 +27,22 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.label_2 = QtGui.QLabel(self.verticalLayoutWidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
+        self.label_2.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(19)
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
         self.verticalLayout_2.addWidget(self.label_2)
-        self.NetworkView = QtGui.QGraphicsView(self.verticalLayoutWidget)
+        self.NetworkView = QtGui.QWidget(self.verticalLayoutWidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.NetworkView.sizePolicy().hasHeightForWidth())
+        self.NetworkView.setSizePolicy(sizePolicy)
         self.NetworkView.setObjectName("NetworkView")
         self.verticalLayout_2.addWidget(self.NetworkView)
         self.widget = QtGui.QWidget(self.centralwidget)
