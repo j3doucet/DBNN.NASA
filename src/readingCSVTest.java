@@ -37,7 +37,7 @@ public class readingCSVTest {
     public static void main(String[] args) throws Exception {
         RandomGenerator gen = new MersenneTwister(123);
 
-        File f = new File("./Data/Astroids.csv");
+        File f = new File("./Data/merged.csv");
         InputStream fis = new FileInputStream(f);
 
         List<String> lines = org.apache.commons.io.IOUtils.readLines(fis);
@@ -76,38 +76,42 @@ public class readingCSVTest {
         NeuralNetConfiguration conf = new NeuralNetConfiguration.Builder()
                 .hiddenUnit(RBM.HiddenUnit.RECTIFIED).momentum(5e-1f)
                 .visibleUnit(RBM.VisibleUnit.GAUSSIAN).regularization(true)
-                .l2(2e-4f).dist(Distributions.uniform(gen))
-                .activationFunction(Activations.tanh()).iterations(10)
+                .l2(2e-2f).dist(Distributions.normal(gen,1.0))
+                .activationFunction(Activations.tanh()).iterations(nrows*100)
                 .weightInit(WeightInit.DISTRIBUTION)
-                .lossFunction(LossFunctions.LossFunction.RECONSTRUCTION_CROSSENTROPY).rng(gen)
-                .learningRate(1e-3f).nIn(ncols).nOut(nclasses).build();
+                .lossFunction(LossFunctions.LossFunction.MCXENT).rng(gen)
+                .learningRate(1e-4f).nIn(ncols).nOut(nclasses)
+                .build();
 
 
 
         DBN d = new DBN.Builder().configure(conf)
-                .hiddenLayerSizes(new int[]{500, 250, 100})
+                .hiddenLayerSizes(new int[]{3})
                 .build();
-
+        d.getOutputLayer().conf().setWeightInit(WeightInit.ZERO);
         d.getOutputLayer().conf().setActivationFunction(Activations.softMaxRows());
         d.getOutputLayer().conf().setLossFunction(LossFunctions.LossFunction.MCXENT);
 
-        DataSetIterator iter = new ListDataSetIterator(completedData.asList(),10);
-        while(iter.hasNext())
-            d.fit(iter.next());
+        completedData.normalizeZeroMeanZeroUnitVariance();
+        completedData.shuffle();
+        d.fit(completedData);
 
 
-        INDArray predict2 = d.output(completedData.getFeatureMatrix());
 
-        Evaluation eval = new Evaluation();
-        eval.eval(completedData.getLabels(),predict2);
-        //log.info(eval.stats());
+
         int[] predict = d.predict(completedData.getFeatureMatrix());
         String[] labels = new String[predict.length];
+        double acc=0;
         for(int i = 0; i < predict.length; i++){
-            labels[i] = outcomeTypes.get(predict[i]);
+                labels[i] = outcomeTypes.get(predict[i]);
+                if(outcomes[i][predict[i]]== 1)
+                    acc++;
         }
+        acc /= predict.length;
 
+        System.out.println("Accuracy: "+acc);
         System.out.println("Predict " + Arrays.toString(labels));
+
 
     }
 
