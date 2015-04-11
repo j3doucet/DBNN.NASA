@@ -2,19 +2,55 @@
 import wget
 import re
 import time
+import os
 import math
 import datetime
 from os import walk
 
-def get_ipac(ra_dec):
-	url_query = "http://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=wise_allwise_p3as_psd&spatial=cone&size=100&outfmt=1&selcols=w1mpro,w2mpro,w3mpro,w4mpro&&objstr="+ra_dec
-	result = wget.download(url_query)
-	result = "nph-query"
+#if new_query is set to false, we will instead look at the last file, not query irsa again.
+def get_ipac(ra_dec,new_query=True):
+	if new_query:
+		#remove any stale queries
+		if os.path.exists("nph-query"):
+			os.remove("nph-query")
+		#if we don't find anything within a cone of 100 arcseconds from our coordinates, we probably don't have a good image
+		radius = 100
+		url_query = "http://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?outfmt=1&objstr="+ra_dec+"&spatial=Cone&radius="+str(radius)+"&catalog=wise_allwise_p3as_psd"
+		result = wget.download(url_query)
+	else:
+		result = "nph-query"
+	#assuming we found multiple sources, we need to figure out which one is closest to our actual search
 	f = open(result,"r")
+	filled_keys = False
+	num_sources = 0
+	sources = []
 	for line in f:
+		result = line.find("SKYAREA")
+		if result>0:
+			parts = line.split("=")
+			ra = float(parts[2].replace("dec",""))
+			dec = float(parts[3].split()[0])
+		#get the guide to the columns
+		if line[0] =='|' and not filled_keys:
+			keys = line.split("|")
+			filled_keys = True
 		if line[0] !='|' and line[0] !='\\':
+			row = {}
 			columns = line.split()
-			print columns
+			for i in range(0,len(columns)):
+				keys[i+1] = keys[i+1].strip()
+				row[keys[i+1]] = columns[i]
+			num_sources+=1
+			sources.append(row)
+	#assuming that multiple sources were found, pick out the closest one
+	num_sources = len(sources)
+	closest_distance = 1000000000
+	for entry in sources:
+		distance = math.sqrt((float(entry["ra"])-ra)**2+(float(entry["dec"])-dec)**2)
+		if distance<closest_distance:
+			closest_distance = distance
+			closest_entry = entry
+	return [num_sources,closest_entry]
 
 def mpc_query():
 	mpc_query = "http://www.minorplanetcenter.net/db_search/show_by_date?utf8=%E2%9C%93&start_date=2015-04-08&end_date=2015-04-09&observatory_code=+--+All+--+&obj_type=all"
@@ -95,7 +131,25 @@ def interpolate_data(mpec_data):
 			for i in range(0,3):
 				ra[i] = ra[i]*float(today)/float(entry['closest_date']-entry['next_date'])+entry['ra'][i]
 				dec[i] = dec[i]*float(today)/float(entry['closest_date']-entry['next_date'])+entry['dec'][i]
-			print "Interpolated: "+str(ra[0])+"h+"+str(ra[1])+"m+"+str(ra[2])+"s+"+str(dec[0])+"d"+str(dec[1])+"m"+str(dec[2])+"s"
+			ra_dec = formatCoords(ra,dec)
+			print "Interpolated: "+ra_dec
+#format the Right Ascention/ Declination coordinates into WISE format
+def formatCoords(ra,dec):
+	#if they are strings, switch them back to floats
+	for i in range(0,3):
+		ra[i] = float(ra[i])
+		dec[i] = float(dec[i])
+	if dec[0]<0:
+		dec_sign = "-"
+	else:
+		dec_sign = "+" 
+	for i in range(0,2):
+		ra[i] = "%02.f" % ra[i]
+		dec[i] = "%02.f" % abs(dec[i])
+	ra[2] = "%04.1f" %ra[2]
+	dec[2] = "%02.f" %dec[2]
+	ra_dec = ra[0]+"h+"+ra[1]+"m+"+ra[2]+"s"+dec_sign+dec[0]+"d+"+dec[1]+"m+"+dec[2]+"s"
+	return ra_dec
 #returns ra1-ra2
 def subtract_times(ra1,ra2):
 	ra = [0,0,0]
@@ -134,22 +188,24 @@ def subtract_times(ra1,ra2):
 				ra[0]+=1
 	return ra
 
-def query_objects(mpec_data):
+#for each entry in the mpec data, search for the object in WISE and extract the W's of the closest source
+def query_objects(mpec_data,new_query = True):
 	tmp_out = open("tmp_out",'w')
+	mpec_data_new = []
 	for entry in mpec_data:
-		if entry['dec'][0]<0:
-			dec_sign = "-"
-		else:
-			dec_sign = "+" 
-		ra_dec = str(entry['ra'][0])+"h+"+str(entry['ra'][1])+"m+"+str(entry['ra'][2])+"s"+dec_sign+str(abs(entry['dec'][0]))+"d+"+str(entry['dec'][1])+"m+"+str(entry['dec'][2])+"s"
+		ra_dec = formatCoords(entry['ra'],entry['dec'])
 		tmp_out.write(ra_dec)
-		print ra_dec
 		#only do the first one until we're sure we got it right
-		get_ipac(ra_dec)
-		return
-		
+		[num_sources, closest_entry] = get_ipac(ra_dec,new_query)
+		entry["num_sources"] = num_sources
+		for i in range(1,5):
+			key = "w"+str(i)+"mpro"
+			entry[key] = closest_entry[key]
+		mpec_data_new.append(entry)
+	return mpec_data_new
+
 if __name__ == '__main__':
 	mpec_data = parse_mpecs()
 	#let's ignore interpolation for now...
 	#interpolate_data(mpec_data)
-	query_objects(mpec_data)
+	query_objects(mpec_data,False)
