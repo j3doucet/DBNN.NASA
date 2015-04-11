@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'DBNNMain.ui'
 #
-# Created: Sat Apr 11 16:43:25 2015
+# Created: Sat Apr 11 17:37:38 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -63,7 +63,7 @@ class Ui_MainWindow(object):
         self.StatusLabel.setText("")
         self.StatusLabel.setObjectName("StatusLabel")
         self.AsteroidBrowser = QtWebKit.QWebView(self.widget_3)
-        self.AsteroidBrowser.setGeometry(QtCore.QRect(10, 0, 800, 600))
+        self.AsteroidBrowser.setGeometry(QtCore.QRect(10, 0, 791, 600))
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)

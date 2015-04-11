@@ -33,6 +33,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 		mpec_data= query_objects(mpec_data,self, not self.dev_mode)
 		self.AsteroidBrowser.setHtml(format_mpec_table(mpec_data))
 		self.StatusLabel.setText("Sending data to brain")
+		mpec_data = generate_classifier(mpec_data,self)
+		self.AsteroidBrowser.setHtml(format_mpec_table(mpec_data))
+		self.StatusLabel.setText("Done!")
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
 	frame = MainWindow()
