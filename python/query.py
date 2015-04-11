@@ -217,7 +217,13 @@ def query_objects(mpec_data,mainWindow,new_query = True):
 			mpec_data[i]["num_sources"] = num_sources
 			for j in range(1,5):
 				key = "w"+str(j)+"mpro"
+				key2 = "w"+str(j)+"sigmpro"
 				mpec_data[i][key] = closest_entry[key]
+				if closest_entry[key2]=="null":
+					mpec_data[i][key2] = 0
+				else:
+					mpec_data[i][key2] = closest_entry[key2]
+				print key2+" "+str(mpec_data[i][key2])
 			mainWindow.AsteroidBrowser.setHtml(format_mpec_table(mpec_data))
 			QCoreApplication.processEvents()
 		#write this data to a file for future use
@@ -255,27 +261,46 @@ def query_objects(mpec_data,mainWindow,new_query = True):
 				cells = lines[i].split(",")
 				data_int = 0
 				for j in range(0,len(keys)):
-					print keys[j]
+					keys[j]= keys[j].strip()
 					if keys[j].find("date")>0:
-						print cells[data_int]
 						parts = cells[data_int].split("-")
-						print parts
-						tmp_date = datetime.date(parts[0],parts[1],parts[2])
+						tmp_date = datetime.date(int(parts[0]),int(parts[1]),int(parts[2]))
 						row[keys[j]] = tmp_date
 						data_int+=1
-					elif keys[j].find("ra")>0 or keys[j].find("dev")>0:
+					elif keys[j].find("ra")>=0 or keys[j].find("dec")>=0:
+						parts = [0,0,0]
 						for k in range(0,3):
 							cells[data_int] = cells[data_int].replace("[","")
 							cells[data_int] = cells[data_int].replace("]","")
 							cells[data_int] = cells[data_int].replace("'","")
-							print cells[data_int]
-							parts[k] = cells[data_int]
+							parts[k] = float(cells[data_int])
 							data_int+=1
-						row[keys[j]] = float(parts)
+						row[keys[j]] = parts
 					else:
 						row[keys[j]]=cells[data_int]
+						data_int+=1
 				mpec_data.append(row)
+		mainWindow.ReadProgressBar.setValue(75)
 	return mpec_data
+#take the values found in the mpec_data and send it to our classifier
+def generate_classifier(mpec_data,mainWindow):
+	for i in range(0,len(mpec_data)):
+		mainWindow.ReadProgressBar.setValue(75+25*i/len(mpec_data))
+		tmp_out = open("classifier.csv","w+")
+		str_out = ""
+		for i in range(1,5):
+			key = "w"+str(i)+"mpro"
+			str_out += str(mpec_data[i][key])+","
+		for i in range(1,5):
+			key = "w"+str(i)+"sigmpro"
+			str_out +=str(mpec_data[i][key])
+			if i!=4:
+				str_out+=","
+		tmp_out.write(str_out)
+		tmp_out.close()
+		mpec_data[i]['class'] = os.popen("java -jar ../classes/artifacts/DBNN_jar/DBNN.jar classifier.csv").read()
+		mainWindow.AsteroidBrowser.setHtml(format_mpec_table(mpec_data))
+		QCoreApplication.processEvents()
 
 if __name__ == '__main__':
 	mpec_data = parse_mpecs()
