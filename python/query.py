@@ -255,26 +255,26 @@ def query_objects(mpec_data,mainWindow,new_query = True):
 				cells = lines[i].split(",")
 				data_int = 0
 				for j in range(0,len(keys)):
-					print keys[j]
+					keys[j]= keys[j].strip()
 					if keys[j].find("date")>0:
-						print cells[data_int]
 						parts = cells[data_int].split("-")
-						print parts
-						tmp_date = datetime.date(parts[0],parts[1],parts[2])
+						tmp_date = datetime.date(int(parts[0]),int(parts[1]),int(parts[2]))
 						row[keys[j]] = tmp_date
 						data_int+=1
-					elif keys[j].find("ra")>0 or keys[j].find("dev")>0:
+					elif keys[j].find("ra")>=0 or keys[j].find("dec")>=0:
+						parts = [0,0,0]
 						for k in range(0,3):
 							cells[data_int] = cells[data_int].replace("[","")
 							cells[data_int] = cells[data_int].replace("]","")
 							cells[data_int] = cells[data_int].replace("'","")
-							print cells[data_int]
-							parts[k] = cells[data_int]
+							parts[k] = float(cells[data_int])
 							data_int+=1
-						row[keys[j]] = float(parts)
+						row[keys[j]] = parts
 					else:
 						row[keys[j]]=cells[data_int]
+						data_int+=1
 				mpec_data.append(row)
+		mainWindow.ReadProgressBar.setValue(75)
 	return mpec_data
 
 if __name__ == '__main__':
