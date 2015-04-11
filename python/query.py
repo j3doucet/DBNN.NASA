@@ -257,8 +257,11 @@ def query_objects(mpec_data,mainWindow,new_query = True):
 						tmp_date = datetime.date(parts[0],parts[1],parts[2])
 						row[keys[j]] = tmp_date
 					elif keys[j].find("ra")>0 or keys[j].find("dev")>0:
-						parts = cells[j].split()
-						row[keys[j]] = parts
+						cells[j] = cells[j].replace("[","")
+						cells[j] = cells[j].replace("]","")
+						cells[j] = cells[j].replace("'","")
+						parts = cells[j].split(",")
+						row[keys[j]] = float(parts)
 					else:
 						row[keys[j]]=cells[j]
 				mpec_data.append(row)
