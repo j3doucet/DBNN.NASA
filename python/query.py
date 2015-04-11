@@ -5,7 +5,9 @@ import time
 import os
 import math
 import datetime
+from format import *
 from os import walk
+from PySide.QtCore import QCoreApplication
 
 #if new_query is set to false, we will instead look at the last file, not query irsa again.
 def get_ipac(ra_dec,new_query=True):
@@ -57,63 +59,89 @@ def mpc_query():
 	mpc_query = wget.download(url_query)
 	f = open(mpc_query,"r")
 
-def get_mpecs():
-	mpec_filename = wget.download("http://www.minorplanetcenter.net/mpec/RecentMPECs.html")
+def get_mpecs(mainWindow,new_file = False):
+	if new_file:
+		#delete the stale data
+		if os.path.exists("RecentMPECs.html"):
+			os.remove("RecentMPECs.html")
+		mpec_filename = wget.download("http://www.minorplanetcenter.net/mpec/RecentMPECs.html")
+	else:
+		mpec_filename = "RecentMPECs.html"
 	f = open(mpec_filename,"r")
 	prev_line = False
 	start_reading = False
-	for line in f:
-		if line == '<ul>\n' and prev_line:
+	lines = f.readlines()
+	for i in range(0,len(lines)):
+		#mpc changed their data format overnight...
+		if lines[i] =='<!-- Main content block -->\n':
+			start_reading = True
+		'''
+		if lines[i] == '<ul>\n' and prev_line:
 			start_reading = True 
-		if line =='</p><p></p><hr>\n':
+		if lines[i] =='</p><p></p><hr>\n':
 			prev_line = True
 		else:
 			prev_line = False
+		'''
 		if start_reading:
-			result = re.match("<p></p>",line)
+			result = re.match("<p><li>",lines[i])
 			if result:
-				columns = line.split('"')
-				result = wget.download(columns[1])
+				columns = lines[i].split('"')
+				#check to see if we already have the file, if not, download it.
+				html_filename = columns[1].split("/")[-1]
+				if not os.path.exists(html_filename):
+					#deal with local links
+					if not re.match("http",columns[1]):
+						columns[1] = "http://www.minorplanetcenter.net"+columns[1]
+					print "downloading: "+columns[1]
+					result = wget.download(columns[1])
+					time.sleep(1)
+		mainWindow.ReadProgressBar.setValue(25*i/len(lines))
 
-def parse_mpecs():
+def parse_mpecs(mainWindow):
 	mpec_data = []
 	today = datetime.date.today()
+	mainWindow.ReadProgressBar.setValue(25)
+	good_filenames = []
 	for (dirpath, dirnames, filenames) in walk("."):
 		for file in filenames:
-			if file.endswith(".html"):
-				line_number = 0
-				f = open(file,"r")
-				start_reading = False
-				first_line = False
-				closest_date = datetime.date(1990,1,1)
-				next_closest_date = datetime.date(1990,1,1)
-				asteroid_name = ""
-				ra = ""
-				dec = ""
-				for line in f:
-					line_number+=1
-					if start_reading:
-						columns = line.split()
-						if first_line:
-							asteroid_name = columns[1] 
-							first_line = False
-						if len(columns) ==14:
-							date = datetime.date(int(columns[0]),int(columns[1]),int(columns[2]))
-							if abs(date-today)<abs(closest_date-date):
-								next_closest_date = closest_date
-								last_ra = ra
-								last_dec = dec
-								closest_date = date
-								ra = [float(columns[3]),float(columns[4]),float(columns[5])]
-								dec = [float(columns[6]),float(columns[7]),float(columns[8])]
-						if re.match("<b>",line):
-							start_reading = False
-					if line =="Ephemeris:\n":
-						start_reading = True
-						first_line = True
-				if closest_date != datetime.date(1990,1,1):
-					row = {"name":asteroid_name,"closest_date":closest_date,"next_date":next_closest_date,"ra":ra,"dec":dec,"last_ra":last_ra,"last_dec":last_dec}
-					mpec_data.append(row)
+			if file.endswith(".html") and file != "RecentMPECs.html":
+				good_filenames.append(file)
+	for i in range(0,len(good_filenames)):
+		mainWindow.ReadProgressBar.setValue(25+25*i/len(good_filenames))
+		line_number = 0
+		f = open(good_filenames[i],"r")
+		start_reading = False
+		first_line = False
+		closest_date = datetime.date(1990,1,1)
+		next_closest_date = datetime.date(1990,1,1)
+		ra = ""
+		asteroid_name = ""
+		dec = ""
+		for line in f:
+			line_number+=1
+			if start_reading:
+				columns = line.split()
+				if first_line:
+					asteroid_name = columns[1] 
+					first_line = False
+				if len(columns) ==14:
+					date = datetime.date(int(columns[0]),int(columns[1]),int(columns[2]))
+					if abs(date-today)<abs(closest_date-date):
+						next_closest_date = closest_date
+						last_ra = ra
+						last_dec = dec
+						closest_date = date
+						ra = [float(columns[3]),float(columns[4]),float(columns[5])]
+						dec = [float(columns[6]),float(columns[7]),float(columns[8])]
+				if re.match("<b>",line):
+					start_reading = False
+			if line =="Ephemeris:\n":
+				start_reading = True
+				first_line = True
+		if closest_date != datetime.date(1990,1,1):
+			row = {"name":asteroid_name,"closest_date":closest_date,"next_date":next_closest_date,"ra":ra,"dec":dec,"last_ra":last_ra,"last_dec":last_dec}
+			mpec_data.append(row)
 	return mpec_data
 #some of the ephemeris don't line up with the current date, if so, interpolate between the last couple of days 
 def interpolate_data(mpec_data):
@@ -133,23 +161,7 @@ def interpolate_data(mpec_data):
 				dec[i] = dec[i]*float(today)/float(entry['closest_date']-entry['next_date'])+entry['dec'][i]
 			ra_dec = formatCoords(ra,dec)
 			print "Interpolated: "+ra_dec
-#format the Right Ascention/ Declination coordinates into WISE format
-def formatCoords(ra,dec):
-	#if they are strings, switch them back to floats
-	for i in range(0,3):
-		ra[i] = float(ra[i])
-		dec[i] = float(dec[i])
-	if dec[0]<0:
-		dec_sign = "-"
-	else:
-		dec_sign = "+" 
-	for i in range(0,2):
-		ra[i] = "%02.f" % ra[i]
-		dec[i] = "%02.f" % abs(dec[i])
-	ra[2] = "%04.1f" %ra[2]
-	dec[2] = "%02.f" %dec[2]
-	ra_dec = ra[0]+"h+"+ra[1]+"m+"+ra[2]+"s"+dec_sign+dec[0]+"d+"+dec[1]+"m+"+dec[2]+"s"
-	return ra_dec
+
 #returns ra1-ra2
 def subtract_times(ra1,ra2):
 	ra = [0,0,0]
@@ -189,20 +201,25 @@ def subtract_times(ra1,ra2):
 	return ra
 
 #for each entry in the mpec data, search for the object in WISE and extract the W's of the closest source
-def query_objects(mpec_data,new_query = True):
+def query_objects(mpec_data,mainWindow,new_query = True):
 	tmp_out = open("tmp_out",'w')
 	mpec_data_new = []
-	for entry in mpec_data:
+	for i in range(0,len(mpec_data)):
+		print "Querying "+str(i)+" out of "+str(len(mpec_data))
+		mainWindow.ReadProgressBar.setValue(50+25*i/len(mpec_data))
+		QCoreApplication.processEvents()
+		entry = mpec_data[i]
 		ra_dec = formatCoords(entry['ra'],entry['dec'])
 		tmp_out.write(ra_dec)
 		#only do the first one until we're sure we got it right
 		[num_sources, closest_entry] = get_ipac(ra_dec,new_query)
-		entry["num_sources"] = num_sources
-		for i in range(1,5):
-			key = "w"+str(i)+"mpro"
-			entry[key] = closest_entry[key]
-		mpec_data_new.append(entry)
-	return mpec_data_new
+		mpec_data[i]["num_sources"] = num_sources
+		for j in range(1,5):
+			key = "w"+str(j)+"mpro"
+			mpec_data[i][key] = closest_entry[key]
+		mainWindow.AsteroidBrowser.setHtml(format_mpec_table(mpec_data))
+		QCoreApplication.processEvents()
+	return mpec_data
 
 if __name__ == '__main__':
 	mpec_data = parse_mpecs()
