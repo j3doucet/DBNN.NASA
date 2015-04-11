@@ -225,7 +225,17 @@ def query_objects(mpec_data,mainWindow,new_query = True):
 		keys = mpec_data[0].keys()
 		f_out.write(",".join(keys)+"\n")
 		for entry in mpec_data:
-			f_out.write(",".join(entry)+"\n")
+			str_out = ""
+			for key in keys:
+				if isinstance(entry[key],list):
+					tmpstr=str(entry[key][0])+" "+str(entry[key][1])+" "+str(entry[key][2])
+					str_out+=tmpstr+","
+				if isinstance(entry[key],datetime.date):
+					tmpstr=entry[key].strftime("%Y-%m-%d")
+					str_out+=tmpstr+","
+				else:
+					str_out +=str(entry[key])+","
+			f_out.write(str_out+"\n")
 		f_out.close()
 	else:
 		#load old data
@@ -241,8 +251,19 @@ def query_objects(mpec_data,mainWindow,new_query = True):
 			else:
 				row = []
 				cells = lines.split(",")
-				for j in range(0,len(cells)):
-					row[keys[j]]=cells[j]
+				for j in range(0,len(keys)):
+					if keys[j].find("date")>0:
+						parts = cells[j].split("-")
+						tmp_date = datetime.date(parts[0],parts[1],parts[2])
+						row[keys[j]] = tmp_date
+					elif keys[j].find("ra")>0 or keys[j].find("dev")>0:
+						cells[j] = cells[j].replace("[","")
+						cells[j] = cells[j].replace("]","")
+						cells[j] = cells[j].replace("'","")
+						parts = cells[j].split(",")
+						row[keys[j]] = float(parts)
+					else:
+						row[keys[j]]=cells[j]
 				mpec_data.append(row)
 	return mpec_data
 
