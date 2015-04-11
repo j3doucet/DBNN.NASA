@@ -14,8 +14,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 		#self.dev_mode = True
 		self.dev_mode = False
 		QObject.connect(self.actionGetAsteroids, SIGNAL("triggered()"), self, SLOT("getAsteroids()"))
-	#if we're developing, don't query the databases (reduce the load on web infrastructure)
+		QObject.connect(self.actionLoad_Old_Data, SIGNAL("triggered()"), self, SLOT("loadOld()"))
+	def loadOld(self):
+		self.dev_mode = True
+		self.run()
 	def getAsteroids(self):
+		self.dev_mode = False
+		self.run()
+	#if we're developing, don't query the databases (reduce the load on web infrastructure)
+	def run(self):
 		self.StatusLabel.setText("Downloading MPECs")
 		if not self.dev_mode:
 			get_mpecs(self)

@@ -42,7 +42,7 @@ public class readingCSVTest {
     public static void main(String[] args) throws Exception {
         RandomGenerator gen = new MersenneTwister(123);
 
-        File f = new File("./Data/merged.csv");
+        File f = new File(args[0]);
         InputStream fis = new FileInputStream(f);
 
         List<String> lines = org.apache.commons.io.IOUtils.readLines(fis);
