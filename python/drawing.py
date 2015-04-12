@@ -39,11 +39,11 @@ class Example(QtGui.QWidget):
     lock = threading.Lock()
     currentData = [-10, -5, 5, 10, -1, 0, 0, 1]
     def getData(self, tehdataz):
-        yield from lock
+        self.lock.acquire()
         try:
             self.currentData = tehdataz
         finally:
-            lock.release()
+            self.lock.release()
 
     def __init__(self):
         super(Example, self).__init__()
@@ -55,9 +55,6 @@ class Example(QtGui.QWidget):
         sys.stdout.flush
         self.setGeometry(840, 40,760, 860)
         self.setWindowTitle('Brain')
-        #self.show()
-        print "hello instatiated"
-        #print dir(self)
         self.show()
         print("hello\n")
         sys.stdout.flush
@@ -79,6 +76,7 @@ class Example(QtGui.QWidget):
             print("hello\n")
             sys.stdout.flush
 
+            self.lock.acquire()
             for i in range(1,9):
                 localsum =0 
                 for j in range(2,8):
@@ -86,6 +84,7 @@ class Example(QtGui.QWidget):
                     localsum += self.currentData[i-1]*float(matrix[i-1][j-2])
                 mysum.append(localsum)
                 self.drawNode(qp,xinit, yinit+i*yspace, 0, self.currentData[i-1])
+            self.lock.release()
 
 
             matrix = self.getWeights(2)
