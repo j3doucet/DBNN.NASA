@@ -47,15 +47,17 @@ class Example(QtGui.QWidget):
 
     def __init__(self):
         super(Example, self).__init__()
-
         self.initUI()
 
     def initUI(self):      
 
         print("hello\n")
         sys.stdout.flush
-        self.setGeometry(300, 300, 280, 270)
+        self.setGeometry(840, 40,760, 860)
         self.setWindowTitle('Brain')
+        #self.show()
+        print "hello instatiated"
+        #print dir(self)
         self.show()
         print("hello\n")
         sys.stdout.flush
@@ -67,7 +69,6 @@ class Example(QtGui.QWidget):
 
         qp = QtGui.QPainter()
         qp.begin(self)
-
         for t in range(1,10):
             xinit = 30
             yinit = 30

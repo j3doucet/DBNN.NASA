@@ -5,6 +5,7 @@ import time
 import os
 import math
 import datetime
+import subprocess
 from format import *
 from os import walk
 from PySide.QtCore import QCoreApplication
@@ -296,9 +297,12 @@ def generate_classifier(mpec_data,mainWindow):
 				str_out+=","
 		tmp_out.write(str_out)
 		tmp_out.close()
-		command = "java -jar ../classes/artifacts/DBNN_jar/DBNN.jar ../Data/Model.NN classifier.csv"
+		command = "java -jar ../out/artifacts/NASAProject_jar/NASAProject.jar ../Data/Model.NN classifier.csv"
 		print command
-		mpec_data[i]['class'] = os.popen(command).read()
+		sub_proc = subprocess.Popen(command,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		(output, error) = sub_proc.communicate()
+		output = output.split()
+		mpec_data[i]['class'] = output[-1]
 		if mpec_data[i]['class'] =="":
 			mpec_data[i]['class'] = "0"
 		print "got class: "+mpec_data[i]['class']+" name: "+mpec_data[i]['name']
