@@ -57,7 +57,7 @@ public class NNImporter {
             System.err.println("Error: Unable to parse passed CSV file: " + NNFile);
             System.exit(1);
         }
-        int nrows = 1;
+        int nrows = 6;
         int ncols = 8;
         int nclasses = 5;
         INDArray data = Nd4j.ones(nrows, ncols);
@@ -122,7 +122,8 @@ public class NNImporter {
         d.getOutputLayer().conf().setLossFunction(LossFunctions.LossFunction.MCXENT);
 
 
-        d.getInputLayer().setW(readMatrix(fis));
+        //d.getInputLayer().setW(readMatrix(fis));
+        readMatrix(fis);
         d.getLayers()[0].setW(readMatrix(fis));
         d.getOutputLayer().setW(readMatrix(fis));
 
