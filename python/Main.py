@@ -12,14 +12,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 	def __init__(self, parent=None):
 		super(MainWindow, self).__init__(parent)
 		self.setupUi(self)
+		self.setGeometry(0, 20,820, 900)
 		#self.dev_mode = True
 		self.dev_mode = False
 		QObject.connect(self.actionGetAsteroids, SIGNAL("triggered()"), self, SLOT("getAsteroids()"))
 		QObject.connect(self.actionLoad_Old_Data, SIGNAL("triggered()"), self, SLOT("loadOld()"))
 		#self.NetworkObjects = QGraphicsScene()
 		self.NetworkObjects = QPainter()
-		print type(self.NetworkView)
-		#self.NetworkView.paintEvent("bloop")
+		self.NetworkView = Example()
 		#self.drawNetwork()
 	def loadOld(self):
 		self.dev_mode = True

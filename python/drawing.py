@@ -21,15 +21,14 @@ from PySide import QtGui, QtCore
 
 class Example(QtGui.QWidget):
     
-    def __init__(self,container):
-        super(Example, self).__init__(container)
-        self.setParent(container)
+    def __init__(self):
+        super(Example, self).__init__()
         self.initUI()
         
     def initUI(self):      
 
-        self.setGeometry(300, 300, 280, 270)
-        #self.setWindowTitle('Brain')
+        self.setGeometry(840, 40,760, 860)
+        self.setWindowTitle('Brain')
         #self.show()
         print "hello instatiated"
         #print dir(self)

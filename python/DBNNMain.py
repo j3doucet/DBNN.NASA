@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'DBNNMain.ui'
 #
-# Created: Sat Apr 11 19:56:37 2015
+# Created: Sat Apr 11 20:58:54 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1600, 900)
+        MainWindow.resize(820, 900)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -20,31 +20,6 @@ class Ui_MainWindow(object):
         MainWindow.setSizePolicy(sizePolicy)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.verticalLayoutWidget = QtGui.QWidget(self.centralwidget)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(820, 20, 761, 821))
-        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-        self.verticalLayout_2 = QtGui.QVBoxLayout(self.verticalLayoutWidget)
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.label_2 = QtGui.QLabel(self.verticalLayoutWidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
-        self.label_2.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setPointSize(19)
-        self.label_2.setFont(font)
-        self.label_2.setObjectName("label_2")
-        self.verticalLayout_2.addWidget(self.label_2)
-        self.NetworkView = Example(self.verticalLayoutWidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.NetworkView.sizePolicy().hasHeightForWidth())
-        self.NetworkView.setSizePolicy(sizePolicy)
-        self.NetworkView.setObjectName("NetworkView")
-        self.verticalLayout_2.addWidget(self.NetworkView)
         self.layoutWidget = QtGui.QWidget(self.centralwidget)
         self.layoutWidget.setGeometry(QtCore.QRect(11, 17, 802, 821))
         self.layoutWidget.setObjectName("layoutWidget")
@@ -84,7 +59,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.widget_3)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 820, 26))
         self.menubar.setObjectName("menubar")
         self.Asteroids = QtGui.QMenu(self.menubar)
         self.Asteroids.setObjectName("Asteroids")
@@ -110,7 +85,6 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "DBNN.NASA", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("MainWindow", "Neural Network", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("MainWindow", "Latest Asteroids", None, QtGui.QApplication.UnicodeUTF8))
         self.Asteroids.setTitle(QtGui.QApplication.translate("MainWindow", "Asteroids", None, QtGui.QApplication.UnicodeUTF8))
         self.menuBrains.setTitle(QtGui.QApplication.translate("MainWindow", "Brains", None, QtGui.QApplication.UnicodeUTF8))
@@ -119,4 +93,3 @@ class Ui_MainWindow(object):
         self.actionLoad_Old_Data.setText(QtGui.QApplication.translate("MainWindow", "Load Old Data", None, QtGui.QApplication.UnicodeUTF8))
 
 from PySide import QtWebKit
-from drawing import Example
