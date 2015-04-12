@@ -315,10 +315,8 @@ def generate_classifier(mpec_data,mainWindow):
 			mpec_data[i]['class'] = "0"
 		mpec_tmp = mpec_data
 		mainWindow.AsteroidBrowser.setHtml(format_mpec_table(mpec_tmp))
-		print "classifier 1 dec 2 "+str(mpec_data[1]["dec"][0])
 		mainWindow.Map.drawPlot(mpec_data)
 		QCoreApplication.processEvents()
-	print "classifier dec 2 "+str(mpec_data[1]["dec"][0])
 	return mpec_data
 
 if __name__ == '__main__':
