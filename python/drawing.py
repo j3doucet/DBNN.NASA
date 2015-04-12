@@ -19,15 +19,18 @@ from PySide import QtGui, QtCore
 
 class Example(QtGui.QWidget):
     
-    def __init__(self):
-        super(Example, self).__init__()
-        
+    def __init__(self,container):
+        super(Example, self).__init__(container)
+        self.setParent(container)
         self.initUI()
         
     def initUI(self):      
 
         self.setGeometry(300, 300, 280, 270)
-        self.setWindowTitle('Brain')
+        #self.setWindowTitle('Brain')
+        #self.show()
+        print "hello instatiated"
+        #print dir(self)
         self.show()
 
 
@@ -35,7 +38,7 @@ class Example(QtGui.QWidget):
 
         qp = QtGui.QPainter()
         qp.begin(self)
-        
+        print "hello painted" 
         xinit = 30
         yinit = 30
 

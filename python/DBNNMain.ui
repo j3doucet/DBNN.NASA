@@ -49,7 +49,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QWidget" name="NetworkView" native="true">
+      <widget class="Example" name="NetworkView" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -60,7 +60,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>11</x>
@@ -188,6 +188,12 @@
    <class>QWebView</class>
    <extends>QWidget</extends>
    <header>QtWebKitWidgets/QWebView</header>
+  </customwidget>
+  <customwidget>
+   <class>Example</class>
+   <extends>QWidget</extends>
+   <header>drawing.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

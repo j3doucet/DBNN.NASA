@@ -5,6 +5,7 @@ import PySide
 from PySide.QtCore import *
 from PySide.QtGui import *
 import sys
+from drawing import *
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -17,7 +18,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 		QObject.connect(self.actionLoad_Old_Data, SIGNAL("triggered()"), self, SLOT("loadOld()"))
 		#self.NetworkObjects = QGraphicsScene()
 		self.NetworkObjects = QPainter()
-		self.drawNetwork()
+		print type(self.NetworkView)
+		#self.NetworkView.paintEvent("bloop")
+		#self.drawNetwork()
 	def loadOld(self):
 		self.dev_mode = True
 		self.run()
@@ -47,7 +50,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 		self.NetworkObjects.setBrush(brush)
 		self.NetworkObjects.drawEllipse(200,200,30,30)
 		self.NetworkObjects.begin(self.NetworkView)
-		self.NetworkView.drawBrushes(self.NetworkObjects)
+		#self.NetworkView.drawBrushes(self.NetworkObjects)
 		self.NetworkObjects.begin()
 if __name__ == '__main__':
 	app = QApplication(sys.argv)

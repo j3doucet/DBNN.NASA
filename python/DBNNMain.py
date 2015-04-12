@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'DBNNMain.ui'
 #
-# Created: Sat Apr 11 19:21:46 2015
+# Created: Sat Apr 11 19:56:37 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -37,7 +37,7 @@ class Ui_MainWindow(object):
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
         self.verticalLayout_2.addWidget(self.label_2)
-        self.NetworkView = QtGui.QWidget(self.verticalLayoutWidget)
+        self.NetworkView = Example(self.verticalLayoutWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -45,13 +45,13 @@ class Ui_MainWindow(object):
         self.NetworkView.setSizePolicy(sizePolicy)
         self.NetworkView.setObjectName("NetworkView")
         self.verticalLayout_2.addWidget(self.NetworkView)
-        self.widget = QtGui.QWidget(self.centralwidget)
-        self.widget.setGeometry(QtCore.QRect(11, 17, 802, 821))
-        self.widget.setObjectName("widget")
-        self.verticalLayout = QtGui.QVBoxLayout(self.widget)
+        self.layoutWidget = QtGui.QWidget(self.centralwidget)
+        self.layoutWidget.setGeometry(QtCore.QRect(11, 17, 802, 821))
+        self.layoutWidget.setObjectName("layoutWidget")
+        self.verticalLayout = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.label = QtGui.QLabel(self.widget)
+        self.label = QtGui.QLabel(self.layoutWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -62,7 +62,7 @@ class Ui_MainWindow(object):
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
-        self.widget_3 = QtGui.QWidget(self.widget)
+        self.widget_3 = QtGui.QWidget(self.layoutWidget)
         self.widget_3.setObjectName("widget_3")
         self.ReadProgressBar = QtGui.QProgressBar(self.widget_3)
         self.ReadProgressBar.setGeometry(QtCore.QRect(7, 650, 781, 23))
@@ -119,3 +119,4 @@ class Ui_MainWindow(object):
         self.actionLoad_Old_Data.setText(QtGui.QApplication.translate("MainWindow", "Load Old Data", None, QtGui.QApplication.UnicodeUTF8))
 
 from PySide import QtWebKit
+from drawing import Example
