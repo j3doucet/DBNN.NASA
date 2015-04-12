@@ -41,6 +41,10 @@ class Example(QtGui.QWidget):
     def getData(self, tehdataz):
         self.lock.acquire()
         self.currentData = tehdataz
+        tehdataz[0] = (tehdataz[0]-10)/5.0
+        tehdataz[1] = (tehdataz[1]-10)/5.0
+        tehdataz[2] = (tehdataz[2]-10)/5.0
+        tehdataz[3] = (tehdataz[3]-10)/5.0
         self.lock.release()
 
     def __init__(self):
@@ -64,6 +68,7 @@ class Example(QtGui.QWidget):
 
         qp = QtGui.QPainter()
         qp.begin(self)
+        qp.setRenderHint(QtGui.QPainter.Antialiasing,0)
         for t in range(1,10):
             xinit = 100
             yinit = 20
