@@ -13,7 +13,9 @@ website: zetcode.com
 last edited: August 2011
 """
 
+import time
 import sys
+import random
 from math import exp
 from PySide import QtGui, QtCore
 
@@ -35,23 +37,46 @@ class Example(QtGui.QWidget):
 
         qp = QtGui.QPainter()
         qp.begin(self)
-        
-        xinit = 30
-        yinit = 30
 
-        for i in range(1,9):
-            for j in range(1,9):
-                self.ConnectNodes(qp,xinit, yinit+i*40, xinit+40, yinit+i*40, 1) 
-            self.drawNode(qp,xinit, yinit+i*40)
+        for t in range(1,10):
+            xinit = 30
+            yinit = 30
+            xspace = 150
+            yspace = 60
+            for i in range(1,9):
+                for j in range(1,9):
+                    self.ConnectNodes(qp,xinit, yinit+i*yspace, xinit+xspace, yinit+j*yspace, 0) 
+                self.drawNode(qp,xinit, yinit+i*yspace, 0)
 
-        self.drawLines(qp)
+            xinit = xinit + xspace 
+            for i in range(1,9):
+                for j in range(2,8):
+                    self.ConnectNodes(qp,xinit, yinit+i*yspace, xinit+xspace, yinit+j*yspace, 0) 
+                self.drawNode(qp,xinit, yinit+i*yspace, 0)
+
+            xinit = xinit + xspace
+            for i in range(2,8):
+                for j in range(3,8):
+                    self.ConnectNodes(qp,xinit, yinit+i*yspace, xinit+xspace, yinit+j*yspace-yspace/2, 0) 
+                self.drawNode(qp,xinit, yinit+i*yspace, 0)
+
+            xinit = xinit + xspace
+            for i in range(2,7):
+                self.drawNode(qp,xinit, yinit+i*yspace + yspace/2, 1)
         qp.end()
 
-    def drawNode(self, qp, x, y):
+    def drawNode(self, qp, x, y, isend):
         pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.SolidLine)
-        gradient = QtGui.QRadialGradient(50, 50, 50, 50, 50)
-        gradient.setColorAt(0, QtGui.QColor.fromRgbF(0, 1, 0, 1))
-        gradient.setColorAt(1, QtGui.QColor.fromRgbF(0, 0, 0, 0))
+        gradient = QtGui.QRadialGradient(x, y, 20, x,y)
+        if(random.random() < 0.25):
+            gradient.setColorAt(0, QtGui.QColor.fromRgbF(0, 1, 0, 1))
+        else:
+            gradient.setColorAt(0, QtGui.QColor.fromRgbF(1, 0, 0, 1))
+        if(isend == 1):
+            gradient.setColorAt(0, QtGui.QColor.fromRgbF(0, 0, random.random(),1))
+
+
+        gradient.setColorAt(1, QtGui.QColor.fromRgbF(0, 0, 0, 0.8))
         qp.setBrush(gradient)
 
         qp.setPen(pen)
