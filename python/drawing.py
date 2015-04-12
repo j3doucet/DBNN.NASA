@@ -41,10 +41,14 @@ class Example(QtGui.QWidget):
     def getData(self, tehdataz):
         self.lock.acquire()
         self.currentData = tehdataz
-        tehdataz[0] = (tehdataz[0]-10)/5.0
-        tehdataz[1] = (tehdataz[1]-10)/5.0
-        tehdataz[2] = (tehdataz[2]-10)/5.0
-        tehdataz[3] = (tehdataz[3]-10)/5.0
+        tehdataz[0] = 2*(tehdataz[0]-15)/5.0
+        tehdataz[1] = 2*(tehdataz[1]-15)/5.0
+        tehdataz[2] = 2*(tehdataz[2]-12)/5.0
+        tehdataz[3] = 2*(tehdataz[3]-12)/5.0
+        tehdataz[4] = 10*tehdataz[4]
+        tehdataz[5] = 10*tehdataz[5]
+        tehdataz[6] = 10*tehdataz[6]
+        tehdataz[7] = 10*tehdataz[7]
         self.lock.release()
 
     def __init__(self):
@@ -99,7 +103,7 @@ class Example(QtGui.QWidget):
 
             xinit = xinit + xspace
             for i in range(2,7):
-                self.drawNode(qp,xinit, yinit+i*yspace + yspace/2, 1, nextsum[i-2])
+                self.drawNode(qp,xinit, yinit+i*yspace + yspace/2, 1, 1e20*nextsum[i-2])
         qp.end()
 
     def drawNode(self, qp, x, y, isend, colorlevel):
@@ -108,10 +112,12 @@ class Example(QtGui.QWidget):
         redLev = 1.0/(1.0+exp(-colorlevel))
         blueLev = 1.0/(1.0+exp(colorlevel))
         pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.SolidLine)
-        gradient = QtGui.QRadialGradient(x, y, 20, x,y)
+        gradient = QtGui.QRadialGradient(x, y, 40, x,y)
         gradient.setColorAt(0, QtGui.QColor.fromRgbF(redLev, 0, blueLev, 1))
         if(isend == 1):
+            print str(blueLev)+" "+str(redLev)+" "+str(colorlevel)
             gradient.setColorAt(0, QtGui.QColor.fromRgbF(blueLev, redLev, 0,1))
+            #gradient.setColorAt(0, QtGui.QColor.fromRgbF(0, 1, 0,1))
 
 
         gradient.setColorAt(1, QtGui.QColor.fromRgbF(0, 0, 0, 0.8))
