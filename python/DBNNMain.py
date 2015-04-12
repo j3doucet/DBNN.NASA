@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'DBNNMain.ui'
 #
-# Created: Sat Apr 11 20:58:54 2015
+# Created: Sun Apr 12 08:20:44 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -75,8 +75,11 @@ class Ui_MainWindow(object):
         self.actionBloop2.setObjectName("actionBloop2")
         self.actionLoad_Old_Data = QtGui.QAction(MainWindow)
         self.actionLoad_Old_Data.setObjectName("actionLoad_Old_Data")
+        self.actionQuit = QtGui.QAction(MainWindow)
+        self.actionQuit.setObjectName("actionQuit")
         self.Asteroids.addAction(self.actionGetAsteroids)
         self.Asteroids.addAction(self.actionLoad_Old_Data)
+        self.Asteroids.addAction(self.actionQuit)
         self.menubar.addAction(self.Asteroids.menuAction())
         self.menubar.addAction(self.menuBrains.menuAction())
 
@@ -91,5 +94,6 @@ class Ui_MainWindow(object):
         self.actionGetAsteroids.setText(QtGui.QApplication.translate("MainWindow", "Get Latest", None, QtGui.QApplication.UnicodeUTF8))
         self.actionBloop2.setText(QtGui.QApplication.translate("MainWindow", "bloop2", None, QtGui.QApplication.UnicodeUTF8))
         self.actionLoad_Old_Data.setText(QtGui.QApplication.translate("MainWindow", "Load Old Data", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionQuit.setText(QtGui.QApplication.translate("MainWindow", "Quit", None, QtGui.QApplication.UnicodeUTF8))
 
 from PySide import QtWebKit

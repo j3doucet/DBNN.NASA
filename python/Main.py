@@ -6,7 +6,7 @@ from PySide.QtCore import *
 from PySide.QtGui import *
 import sys
 from drawing import *
-
+from matplotlib_class import *
 
 class MainWindow(QMainWindow, Ui_MainWindow):
 	def __init__(self, parent=None):
@@ -17,10 +17,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 		self.dev_mode = False
 		QObject.connect(self.actionGetAsteroids, SIGNAL("triggered()"), self, SLOT("getAsteroids()"))
 		QObject.connect(self.actionLoad_Old_Data, SIGNAL("triggered()"), self, SLOT("loadOld()"))
-		#self.NetworkObjects = QGraphicsScene()
+		QObject.connect(self.actionQuit, SIGNAL("triggered()"), self, SLOT("closeAll()"))
 		self.NetworkObjects = QPainter()
 		self.NetworkView = Example()
-		#self.drawNetwork()
+		self.Map = MatplotlibWidget()
 	def loadOld(self):
 		self.dev_mode = True
 		self.run()
@@ -34,6 +34,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 			get_mpecs(self)
 		self.StatusLabel.setText("Parsing MPECs")
 		mpec_data = parse_mpecs(self)
+		self.Map.drawPlot(mpec_data)
 		self.AsteroidBrowser.setHtml(format_mpec_table(mpec_data))
 		self.StatusLabel.setText("Searching WISE for matches")
 		mpec_data= query_objects(mpec_data,self, not self.dev_mode)
@@ -43,15 +44,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 		self.AsteroidBrowser.setHtml(format_mpec_table(mpec_data))
 		self.StatusLabel.setText("Done!")
 		self.ReadProgressBar.setValue(100)
-	#draw the neural network
-	def drawNetwork(self):
-		#print dir(self.NetworkObjects)
-		brush = QBrush(Qt.SolidPattern)
-		self.NetworkObjects.setBrush(brush)
-		self.NetworkObjects.drawEllipse(200,200,30,30)
-		self.NetworkObjects.begin(self.NetworkView)
-		#self.NetworkView.drawBrushes(self.NetworkObjects)
-		self.NetworkObjects.begin()
+	def closeAll(self):
+		self.Map.close()
+		self.NetworkView.close()
+		self.close()
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
 	frame = MainWindow()

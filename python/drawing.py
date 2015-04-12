@@ -58,7 +58,7 @@ class Example(QtGui.QWidget):
     def initUI(self):      
 
         sys.stdout.flush
-        self.setGeometry(840, 40,760, 800)
+        self.setGeometry(840, 40,760, 450)
         self.setWindowTitle('Brain')
         self.show()
         sys.stdout.flush
@@ -72,9 +72,9 @@ class Example(QtGui.QWidget):
         qp.setRenderHint(QtGui.QPainter.Antialiasing,0)
         for t in range(1,10):
             xinit = 100
-            yinit = 20
+            yinit = 0
             xspace = 300
-            yspace = 80
+            yspace = 50
             matrix = self.getWeights(1)
             mysum = []
             sys.stdout.flush
@@ -115,10 +115,7 @@ class Example(QtGui.QWidget):
         gradient = QtGui.QRadialGradient(x, y, 40, x,y)
         gradient.setColorAt(0, QtGui.QColor.fromRgbF(redLev, 0, blueLev, 1))
         if(isend == 1):
-            print str(blueLev)+" "+str(redLev)+" "+str(colorlevel)
             gradient.setColorAt(0, QtGui.QColor.fromRgbF(blueLev, redLev, 0,1))
-            #gradient.setColorAt(0, QtGui.QColor.fromRgbF(0, 1, 0,1))
-
 
         gradient.setColorAt(1, QtGui.QColor.fromRgbF(0, 0, 0, 0.8))
         qp.setBrush(gradient)

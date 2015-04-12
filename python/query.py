@@ -299,7 +299,6 @@ def generate_classifier(mpec_data,mainWindow):
 				str_out+=","
 			vector.append(float(mpec_data[i][key]))
 		mainWindow.NetworkView.getData(vector)
-		print vector
 		time.sleep(1)
 		mainWindow.NetworkView.update()
 		tmp_out.write(str_out)
@@ -311,8 +310,8 @@ def generate_classifier(mpec_data,mainWindow):
 		mpec_data[i]['class'] = output[-1]
 		if mpec_data[i]['class'] =="":
 			mpec_data[i]['class'] = "0"
-		print "got class: "+mpec_data[i]['class']+" name: "+mpec_data[i]['name']
 		mainWindow.AsteroidBrowser.setHtml(format_mpec_table(mpec_data))
+		mainWindow.Map.drawPlot(mpec_data)
 		QCoreApplication.processEvents()
 	return mpec_data
 
