@@ -41,7 +41,8 @@ class MatplotlibWidget(QtGui.QMainWindow):
 		for entry in mpec_data:
 			ra = float(entry["ra"][0])*360/24+float(entry["ra"][1])+float(entry["ra"][2])*1/60.0
 			dec = abs(float(entry["dec"][0]))+float(entry["dec"][1])/60.0+float(entry["dec"][2])*1/(60.0*60.0)
-			math.copysign(dec,float(entry["dec"][0]))
+			if float(entry['dec'][0])<0:
+				dec = -dec
 			if "class" in entry.keys():
 				xvals_class.append(ra)
 				yvals_class.append(dec)

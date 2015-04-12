@@ -267,6 +267,7 @@ def query_objects(mpec_data,mainWindow,new_query = True):
 						row[keys[j]] = tmp_date
 						data_int+=1
 					elif keys[j].find("ra")>=0 or keys[j].find("dec")>=0:
+						
 						parts = [0,0,0]
 						for k in range(0,3):
 							cells[data_int] = cells[data_int].replace("[","")
@@ -278,8 +279,10 @@ def query_objects(mpec_data,mainWindow,new_query = True):
 					else:
 						row[keys[j]]=cells[data_int]
 						data_int+=1
+				row["dec"] = row["last_dec"]
 				mpec_data.append(row)
 		mainWindow.ReadProgressBar.setValue(75)
+	print "load dec 2 "+str(mpec_data[1]["dec"][0])
 	return mpec_data
 #take the values found in the mpec_data and send it to our classifier
 def generate_classifier(mpec_data,mainWindow):
@@ -310,9 +313,12 @@ def generate_classifier(mpec_data,mainWindow):
 		mpec_data[i]['class'] = output[-1]
 		if mpec_data[i]['class'] =="":
 			mpec_data[i]['class'] = "0"
-		mainWindow.AsteroidBrowser.setHtml(format_mpec_table(mpec_data))
+		mpec_tmp = mpec_data
+		mainWindow.AsteroidBrowser.setHtml(format_mpec_table(mpec_tmp))
+		print "classifier 1 dec 2 "+str(mpec_data[1]["dec"][0])
 		mainWindow.Map.drawPlot(mpec_data)
 		QCoreApplication.processEvents()
+	print "classifier dec 2 "+str(mpec_data[1]["dec"][0])
 	return mpec_data
 
 if __name__ == '__main__':

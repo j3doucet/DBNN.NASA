@@ -16,20 +16,23 @@ def format_row(row_list,bg_color,fontface,fontsize,bold):
 
 #format the Right Ascention/ Declination coordinates into WISE format
 def formatCoords(ra,dec):
+	tmp_ra = [0,0,0]
+	tmp_dec = [0,0,0]
 	#if they are strings, switch them back to floats
 	for i in range(0,3):
-		ra[i] = float(ra[i])
-		dec[i] = float(dec[i])
-	if dec[0]<0:
+		tmp_ra[i] = float(ra[i])
+		tmp_dec[i] = float(dec[i])
+	if float(dec[0])<0:
+		#print "negative dec!"
 		dec_sign = "-"
 	else:
 		dec_sign = "+" 
 	for i in range(0,2):
-		ra[i] = "%02.f" % ra[i]
-		dec[i] = "%02.f" % abs(dec[i])
-	ra[2] = "%04.1f" %ra[2]
-	dec[2] = "%02.f" %dec[2]
-	ra_dec = ra[0]+"h+"+ra[1]+"m+"+ra[2]+"s"+dec_sign+dec[0]+"d+"+dec[1]+"m+"+dec[2]+"s"
+		tmp_ra[i] = "%02.f" % ra[i]
+		tmp_dec[i] = "%02.f" % abs(dec[i])
+	tmp_ra[2] = "%04.1f" %ra[2]
+	tmp_dec[2] = "%02.f" %dec[2]
+	ra_dec = tmp_ra[0]+"h+"+tmp_ra[1]+"m+"+tmp_ra[2]+"s"+dec_sign+tmp_dec[0]+"d+"+tmp_dec[1]+"m+"+tmp_dec[2]+"s"
 	return ra_dec
 
 def format_mpec_table(mpec_data):

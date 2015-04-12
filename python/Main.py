@@ -34,14 +34,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 			get_mpecs(self)
 		self.StatusLabel.setText("Parsing MPECs")
 		mpec_data = parse_mpecs(self)
-		self.Map.drawPlot(mpec_data)
-		self.AsteroidBrowser.setHtml(format_mpec_table(mpec_data))
+		print "dec 2 "+str(mpec_data[1]["dec"][0])
+		mpec_tmp = mpec_data
+		self.AsteroidBrowser.setHtml(format_mpec_table(mpec_tmp))
 		self.StatusLabel.setText("Searching WISE for matches")
 		mpec_data= query_objects(mpec_data,self, not self.dev_mode)
+		self.Map.drawPlot(mpec_data)
 		self.AsteroidBrowser.setHtml(format_mpec_table(mpec_data))
 		self.StatusLabel.setText("Sending data to brain")
 		mpec_data = generate_classifier(mpec_data,self)
-		self.AsteroidBrowser.setHtml(format_mpec_table(mpec_data))
+		mpec_tmp = mpec_data
+		self.AsteroidBrowser.setHtml(format_mpec_table(mpec_tmp))
 		self.StatusLabel.setText("Done!")
 		self.ReadProgressBar.setValue(100)
 	def closeAll(self):
