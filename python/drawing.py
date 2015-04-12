@@ -40,10 +40,8 @@ class Example(QtGui.QWidget):
     currentData = [-10, -5, 5, 10, -1, 0, 0, 1]
     def getData(self, tehdataz):
         self.lock.acquire()
-        try:
-            self.currentData = tehdataz
-        finally:
-            self.lock.release()
+        self.currentData = tehdataz
+        self.lock.release()
 
     def __init__(self):
         super(Example, self).__init__()
@@ -53,7 +51,7 @@ class Example(QtGui.QWidget):
 
         print("hello\n")
         sys.stdout.flush
-        self.setGeometry(840, 40,760, 860)
+        self.setGeometry(840, 40,760, 800)
         self.setWindowTitle('Brain')
         self.show()
         print("hello\n")
@@ -67,10 +65,10 @@ class Example(QtGui.QWidget):
         qp = QtGui.QPainter()
         qp.begin(self)
         for t in range(1,10):
-            xinit = 30
-            yinit = 30
-            xspace = 150
-            yspace = 60
+            xinit = 100
+            yinit = 20
+            xspace = 300
+            yspace = 80
             matrix = self.getWeights(1)
             mysum = []
             print("hello\n")
