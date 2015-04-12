@@ -49,17 +49,14 @@ class Example(QtGui.QWidget):
 
     def initUI(self):      
 
-        print("hello\n")
         sys.stdout.flush
         self.setGeometry(840, 40,760, 800)
         self.setWindowTitle('Brain')
         self.show()
-        print("hello\n")
         sys.stdout.flush
 
 
     def paintEvent(self, e):
-        print("hello\n")
         sys.stdout.flush
 
         qp = QtGui.QPainter()
@@ -71,7 +68,6 @@ class Example(QtGui.QWidget):
             yspace = 80
             matrix = self.getWeights(1)
             mysum = []
-            print("hello\n")
             sys.stdout.flush
 
             self.lock.acquire()

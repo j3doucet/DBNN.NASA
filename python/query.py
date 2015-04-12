@@ -287,18 +287,24 @@ def generate_classifier(mpec_data,mainWindow):
 		mainWindow.ReadProgressBar.setValue(75+25*i/len(mpec_data))
 		tmp_out = open("classifier.csv","w+")
 		str_out = ""
+		vector = []
 		for j in range(1,5):
 			key = "w"+str(j)+"mpro"
-			str_out += str(mpec_data[j][key])+","
+			str_out += str(mpec_data[i][key])+","
+			vector.append(float(mpec_data[i][key]))
 		for j in range(1,5):
 			key = "w"+str(j)+"sigmpro"
-			str_out +=str(mpec_data[j][key])
+			str_out +=str(mpec_data[i][key])
 			if j!=4:
 				str_out+=","
+			vector.append(float(mpec_data[i][key]))
+		mainWindow.NetworkView.getData(vector)
+		print vector
+		time.sleep(1)
+		mainWindow.NetworkView.update()
 		tmp_out.write(str_out)
 		tmp_out.close()
 		command = "java -jar ../out/artifacts/NASAProject_jar/NASAProject.jar ../Data/Model.NN classifier.csv"
-		print command
 		sub_proc = subprocess.Popen(command,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		(output, error) = sub_proc.communicate()
 		output = output.split()
